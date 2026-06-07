@@ -1,0 +1,2 @@
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-28T11:02:38.193+00:00", "seq": 55}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-28T11:02:38.198+00:00", "seq": 56}

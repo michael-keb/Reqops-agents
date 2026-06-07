@@ -1,0 +1,14 @@
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-28T07:26:47.947+00:00", "seq": 604}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-28T07:26:48.250+00:00", "seq": 605}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-28T07:26:48.250+00:00", "seq": 606}
+{"kind": "http", "level": "info", "msg": "GET /api/state", "data": {"method": "GET", "path": "/api/state", "status": null, "detail": ""}, "ts": "2026-05-28T07:26:48.256+00:00", "seq": 607}
+{"kind": "http", "level": "info", "msg": "GET /api/state → 200", "data": {"method": "GET", "path": "/api/state", "status": 200, "detail": ""}, "ts": "2026-05-28T07:26:48.257+00:00", "seq": 608}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-28T07:26:48.258+00:00", "seq": 609}
+{"kind": "ws", "level": "info", "msg": "in disconnect", "data": {"direction": "in", "type": "disconnect", "detail": ""}, "ts": "2026-05-28T07:26:48.277+00:00", "seq": 610}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-28T07:26:48.284+00:00", "seq": 611}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-28T07:26:48.284+00:00", "seq": 612}
+{"kind": "lifecycle", "level": "info", "msg": "mock interrupt", "ts": "2026-05-28T07:26:48.284+00:00", "seq": 613}
+{"kind": "event", "level": "info", "msg": "interrupted", "data": {"type": "interrupted", "turn": 0}, "ts": "2026-05-28T07:26:48.284+00:00", "seq": 614}
+{"kind": "lifecycle", "level": "info", "msg": "mock agent stopped", "ts": "2026-05-28T07:26:48.284+00:00", "seq": 615}
+{"kind": "event", "level": "info", "msg": "stopped", "data": {"type": "stopped"}, "ts": "2026-05-28T07:26:48.284+00:00", "seq": 616}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-28T07:26:48.285+00:00", "seq": 617}

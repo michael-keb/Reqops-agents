@@ -1,0 +1,14 @@
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:56:05.066+00:00", "seq": 98}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T21:56:05.175+00:00", "seq": 99}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T21:56:05.175+00:00", "seq": 100}
+{"kind": "http", "level": "info", "msg": "GET /api/state", "data": {"method": "GET", "path": "/api/state", "status": null, "detail": ""}, "ts": "2026-05-27T21:56:05.180+00:00", "seq": 101}
+{"kind": "http", "level": "info", "msg": "GET /api/state → 200", "data": {"method": "GET", "path": "/api/state", "status": 200, "detail": ""}, "ts": "2026-05-27T21:56:05.180+00:00", "seq": 102}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-27T21:56:05.181+00:00", "seq": 103}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T21:56:05.543+00:00", "seq": 104}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:56:05.745+00:00", "seq": 133}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T21:56:05.854+00:00", "seq": 134}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T21:56:05.855+00:00", "seq": 135}
+{"kind": "http", "level": "info", "msg": "GET /api/state", "data": {"method": "GET", "path": "/api/state", "status": null, "detail": ""}, "ts": "2026-05-27T21:56:05.858+00:00", "seq": 136}
+{"kind": "http", "level": "info", "msg": "GET /api/state → 200", "data": {"method": "GET", "path": "/api/state", "status": 200, "detail": ""}, "ts": "2026-05-27T21:56:05.859+00:00", "seq": 137}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-27T21:56:05.859+00:00", "seq": 138}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T21:56:06.229+00:00", "seq": 139}

@@ -1,0 +1,15 @@
+{"kind": "sys", "level": "info", "msg": "Uplift v6 bridge starting", "data": {"port": 8786}, "ts": "2026-05-27T05:42:34.502+00:00", "seq": 1}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T05:42:44.949+00:00", "seq": 2}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T05:42:44.949+00:00", "seq": 3}
+{"kind": "http", "level": "info", "msg": "GET /api/state", "data": {"method": "GET", "path": "/api/state", "status": null, "detail": ""}, "ts": "2026-05-27T05:42:58.686+00:00", "seq": 4}
+{"kind": "http", "level": "info", "msg": "GET /api/state → 200", "data": {"method": "GET", "path": "/api/state", "status": 200, "detail": ""}, "ts": "2026-05-27T05:42:58.690+00:00", "seq": 5}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T05:42:58.691+00:00", "seq": 6}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T05:42:58.691+00:00", "seq": 7}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-27T05:42:58.697+00:00", "seq": 8}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T05:42:58.698+00:00", "seq": 9}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T05:42:58.698+00:00", "seq": 10}
+{"kind": "http", "level": "info", "msg": "GET /api/trace", "data": {"method": "GET", "path": "/api/trace", "status": null, "detail": ""}, "ts": "2026-05-27T05:42:58.698+00:00", "seq": 11}
+{"kind": "http", "level": "info", "msg": "GET /api/trace → 200", "data": {"method": "GET", "path": "/api/trace", "status": 200, "detail": ""}, "ts": "2026-05-27T05:42:58.699+00:00", "seq": 12}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T05:43:00.195+00:00", "seq": 13}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T05:43:00.195+00:00", "seq": 14}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T05:43:03.987+00:00", "seq": 15}

@@ -1,0 +1,25 @@
+## State codes
+P3 G1:X2 G2:X1 G4:X1 G6:X2 G8:X1 GA:X4 L1 R1 S2 Q7
+
+## Questions
+
+### 1. G6 — scope boundary
+What features should be included in the MVP for version 1?
+- A) Only the listing and browsing features
+- B) Listing, browsing, and seller verification
+- C) Listing, browsing, seller verification, and manual negotiation
+- D) Something else — [hint for sub-angle]
+
+### 2. G4 — workflow core path
+What is the primary user journey you envision for sellers?
+- A) Create a listing and wait for buyers to contact them
+- B) Actively negotiate with buyers after listing
+- C) Create a listing, browse other listings, and contact buyers
+- D) Something else — [hint for sub-angle]
+
+### 3. G1 — user unproven risk
+Who are the specific users you are targeting with this app?
+- A) Individual car sellers looking to sell privately
+- B) Buyers looking for deals on used cars
+- C) Both sellers and buyers in the consumer P2P market
+- D) Something else — [hint for sub-angle]

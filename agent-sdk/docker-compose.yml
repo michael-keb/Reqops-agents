@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agent_sdk_server
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+  server:
+    build: .
+    ports:
+      - "7778:7778"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/agent_sdk_server
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      DAYTONA_API_KEY: ${DAYTONA_API_KEY:-}
+      SANDBOX_IDLE_TIMEOUT: ${SANDBOX_IDLE_TIMEOUT:-300}
+      SANDBOX_REAPER_TICK: ${SANDBOX_REAPER_TICK:-60}
+      # Default to "test" so daytona sandboxes spawned from local
+      # ``docker compose up`` are isolatable from production via
+      # ``cleanup_orphans.py``. Railway production builds from Dockerfile
+      # (which doesn't set this), so the server falls back to its
+      # ``"production"`` code default in real deploys. Override with
+      # ``AGENT_SDK_ORIGIN=production docker compose up`` if needed.
+      AGENT_SDK_ORIGIN: ${AGENT_SDK_ORIGIN:-test}
+    volumes:
+      - claude_config:/root/.claude
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  claude_config:

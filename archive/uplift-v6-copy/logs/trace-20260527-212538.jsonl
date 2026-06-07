@@ -1,0 +1,7 @@
+{"kind": "sys", "level": "info", "msg": "Uplift v6 bridge starting", "data": {"port": 8796, "pid": 65779}, "ts": "2026-05-27T21:25:38.520+00:00", "seq": 1}
+{"kind": "sys", "level": "warn", "msg": "Mock agent mode (UPLIFT_MOCK_AGENT=1) — no Cursor CLI calls", "ts": "2026-05-27T21:25:38.521+00:00", "seq": 2}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T21:25:38.670+00:00", "seq": 3}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T21:25:38.671+00:00", "seq": 4}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-27T21:25:39.000+00:00", "seq": 5}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-27T21:25:39.000+00:00", "seq": 6}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-27T21:25:39.002+00:00", "seq": 7}

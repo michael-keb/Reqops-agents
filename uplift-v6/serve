@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Uplift v6 — chat UI + persistent PTY-wrapped Cursor agent CLI.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+
+VENV="$ROOT/.venv"
+if [[ ! -d "$VENV" ]]; then
+  python3 -m venv "$VENV"
+fi
+
+# shellcheck disable=SC1091
+source "$VENV/bin/activate"
+pip install -q -r requirements.txt
+
+if ! command -v agent >/dev/null 2>&1; then
+  echo "Cursor agent CLI not found. Install:" >&2
+  echo "  curl https://cursor.com/install -fsS | bash && agent login" >&2
+  exit 1
+fi
+
+OPEN=0
+ARGS=()
+for arg in "$@"; do
+  if [[ "$arg" == "--open" ]]; then
+    OPEN=1
+  else
+    ARGS+=("$arg")
+  fi
+done
+
+PORT="${UPLIFT_PORT:-8786}"
+export UPLIFT_PORT="$PORT"
+export UPLIFT_AGENT_MODE="${UPLIFT_AGENT_MODE:-headless}"
+# Discovery + signal board via agent-sdk (one persistent session per workshop / extract).
+export UPLIFT_DISCOVERY_RUNNER="${UPLIFT_DISCOVERY_RUNNER:-sdk}"
+export UPLIFT_SIGNALS_RUNNER="${UPLIFT_SIGNALS_RUNNER:-sdk}"
+export UPLIFT_AGENT_SDK_URL="${UPLIFT_AGENT_SDK_URL:-http://127.0.0.1:7778}"
+
+if [[ "$OPEN" == 1 ]]; then
+  (sleep 1 && open "http://127.0.0.1:${PORT}/" 2>/dev/null) &
+fi
+
+exec python -m bridge.server --kill-port ${ARGS+"${ARGS[@]}"}

@@ -1,0 +1,12 @@
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:55:18.642+00:00", "seq": 738}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-27T21:55:18.643+00:00", "seq": 739}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-27T21:55:18.643+00:00", "seq": 740}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-27T21:55:18.643+00:00", "seq": 741}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:55:18.644+00:00", "seq": 742}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T21:55:18.645+00:00", "seq": 743}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:55:18.844+00:00", "seq": 765}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-27T21:55:18.846+00:00", "seq": 766}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-27T21:55:18.846+00:00", "seq": 767}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-27T21:55:18.846+00:00", "seq": 768}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:55:18.847+00:00", "seq": 769}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T21:55:18.848+00:00", "seq": 770}

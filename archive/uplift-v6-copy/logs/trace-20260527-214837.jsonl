@@ -1,0 +1,12 @@
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:48:37.870+00:00", "seq": 152}
+{"kind": "ws", "level": "info", "msg": "in disconnect", "data": {"direction": "in", "type": "disconnect", "detail": ""}, "ts": "2026-05-27T21:48:37.890+00:00", "seq": 153}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-27T21:48:37.900+00:00", "seq": 154}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-27T21:48:37.901+00:00", "seq": 155}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-27T21:48:37.901+00:00", "seq": 156}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T21:48:37.901+00:00", "seq": 157}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T21:48:38.010+00:00", "seq": 158}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T21:48:38.010+00:00", "seq": 159}
+{"kind": "http", "level": "info", "msg": "GET /api/state", "data": {"method": "GET", "path": "/api/state", "status": null, "detail": ""}, "ts": "2026-05-27T21:48:38.014+00:00", "seq": 160}
+{"kind": "http", "level": "info", "msg": "GET /api/state → 200", "data": {"method": "GET", "path": "/api/state", "status": 200, "detail": ""}, "ts": "2026-05-27T21:48:38.014+00:00", "seq": 161}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-27T21:48:38.015+00:00", "seq": 162}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T21:48:38.362+00:00", "seq": 163}

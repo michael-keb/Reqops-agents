@@ -1,0 +1,25 @@
+## State codes
+P3 G1:X2 G2:X5 G6:X2 G8:X1 GA:X4 L1 R1 S2 Q7
+
+## Questions
+
+### 1. G8 — failure unhandled
+What happens if a user reports a scam or unsafe meetup?
+- A) The listing is immediately removed and the user is notified.
+- B) A review process is initiated to assess the claim before any action.
+- C) Users are given guidance on how to handle such situations.
+- D) Something else — [hint for sub-angle]
+
+### 2. G1 — user unproven risk
+Who exactly are the individuals you are targeting as primary users?
+- A) First-time car sellers looking to sell their personal vehicles.
+- B) Experienced sellers who frequently list cars for sale.
+- C) Buyers looking for specific types of vehicles.
+- D) Something else — [hint for sub-angle]
+
+### 3. G6 — scope boundary
+What specific features will be included in the first version of the app?
+- A) Basic listing creation and browsing capabilities.
+- B) Enhanced seller verification processes.
+- C) A messaging system for buyers and sellers.
+- D) Something else — [hint for sub-angle]

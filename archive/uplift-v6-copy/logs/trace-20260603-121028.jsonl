@@ -1,0 +1,2 @@
+{"kind": "spawn", "level": "info", "msg": "agent pid 0", "data": {"cmd": ["sdk-agent", "session", "7b293512…"], "cwd": ".", "pid": 0, "env_keys": ["UPLIFT_AGENT_SDK_URL"]}, "ts": "2026-06-03T12:10:28.045+00:00", "seq": 1}
+{"kind": "event", "level": "info", "msg": "ready", "data": {"type": "ready", "pid": null, "mode": "sdk", "session_id": "7b293512-9bf"}, "ts": "2026-06-03T12:10:28.046+00:00", "seq": 2}

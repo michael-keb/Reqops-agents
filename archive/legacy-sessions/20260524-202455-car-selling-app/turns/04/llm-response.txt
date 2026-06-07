@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X1 G3:X1 G4:X1 G5:X1 G6:X1 G7:X1 L1 R1 S1 Q7
+
+## Questions
+### 1. G7 — domain rule
+What specific constraints will guide seller verification?
+- A) Only verified sellers can list cars.
+- B) Sellers must provide identification and proof of ownership.
+- C) No specific constraints; open to all sellers.
+- D) Something else — [please specify any additional rules or guidelines you have in mind].
+
+### 2. G4 — workflow core path
+What is the primary workflow for a seller to list a car?
+- A) Create an account, verify identity, create a listing.
+- B) Create a listing directly without verification.
+- C) List a car after providing safety guidance only.
+- D) Something else — [describe any other steps you envision].
+
+### 3. G5 — success measure
+What will be the key indicators of success for the app?
+- A) Number of listings created.
+- B) User satisfaction ratings.
+- C) Successful transactions completed.
+- D) Something else — [share any other metrics you consider important].

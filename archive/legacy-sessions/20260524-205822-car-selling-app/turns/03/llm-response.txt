@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X2 G2:X1 G3:X1 G4:X1 G6:X1 G8:X1 L1 R1 S2 Q7
+
+## Questions
+### 1. G2 — outcome definition
+What specific job do you want to achieve for users with this app?
+- A) Help users sell their cars quickly.
+- B) Provide a platform for buyers to find cars easily.
+- C) Both A and B.
+- D) Something else — [hint for sub-angle]
+
+### 2. G3 — entry point
+How does a user begin their experience with the app?
+- A) By creating a listing.
+- B) By browsing existing listings.
+- C) By searching for a specific car.
+- D) Something else — [hint for sub-angle]
+
+### 3. G8 — failure handling
+What happens if a user has a problem during the listing or buying process?
+- A) They can contact support directly through the app.
+- B) There are FAQs and troubleshooting guides available.
+- C) Users can report issues via email.
+- D) Something else — [hint for sub-angle]

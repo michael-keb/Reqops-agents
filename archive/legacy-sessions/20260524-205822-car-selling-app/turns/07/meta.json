@@ -1,0 +1,21 @@
+{
+  "turn": 7,
+  "status": "ok",
+  "completed_at": "2026-05-24T20:58:52.832948+00:00",
+  "model": "gpt-4o-mini",
+  "api_key": "sk-proj\u202633IA",
+  "state_codes": "P3 G2:X5 G5:X1 G6:X2 G8:X1 L1 R1 S2 Q7",
+  "output_flags": {
+    "reflection": false,
+    "state_codes": true,
+    "narrative": false,
+    "questions": true,
+    "memory_patch": false
+  },
+  "prompt_tokens": 3780,
+  "completion_tokens": 230,
+  "total_tokens": 4010,
+  "input_prep_ms": 0.1,
+  "llm_wait_ms": 3560.9,
+  "total_response_ms": 3561.0
+}

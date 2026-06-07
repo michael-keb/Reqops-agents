@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X1 G3:X2 G4:X1 G6:X2 G7:X1 G8:X1 L1 L4 R3 S2 Q7
+
+## Questions
+### 1. G3 — entry point
+What specific actions will users take to start using the app?
+- A) Create an account
+- B) Browse listings without an account
+- C) Contact sellers directly
+- D) Something else — [hint for sub-angle]
+
+### 2. G6 — scope boundary
+Which features do you want to explicitly include in v1?
+- A) Listing creation and browsing
+- B) Seller verification and reporting
+- C) Manual negotiation for pricing
+- D) Something else — [hint for sub-angle]
+
+### 3. G8 — failure modes
+What do you anticipate happening if a user encounters a problem with a listing?
+- A) They will report it through the app
+- B) They will leave the platform
+- C) They will seek help from customer support
+- D) Something else — [hint for sub-angle]

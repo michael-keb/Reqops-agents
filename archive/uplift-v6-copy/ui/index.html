@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Uplift v6</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <strong data-testid="brand">Uplift v6</strong>
+      <span class="tag" id="mode-tag">pty</span>
+    </div>
+    <div class="meta" id="meta">
+      <span class="pill" id="pill-ws" data-testid="pill-ws">connecting…</span>
+      <span class="pill" id="pill-session" data-testid="pill-session">no session</span>
+      <span class="pill" id="pill-turn" data-testid="pill-turn">turn —</span>
+      <span class="pill" id="pill-errors" data-testid="pill-errors" hidden>0 errors</span>
+    </div>
+    <div class="actions">
+      <button type="button" id="btn-interrupt" title="Stop turn (Ctrl+C)">Stop turn</button>
+      <button type="button" id="btn-new-session" class="primary" title="Fresh terminal (⌘⇧N)">New session</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="mcq-pane" id="mcq-pane" aria-label="Discovery questions">
+      <div class="pane-head">
+        Questions
+        <span class="hint">Click A–D to paste into terminal</span>
+      </div>
+      <div id="mcq-list" class="mcq-list" data-testid="mcq-list">
+        <p class="mcq-empty">Start a session — MCQ options appear here after each agent turn.</p>
+      </div>
+    </aside>
+    <section class="term-pane">
+      <div class="pane-head">
+        Terminal
+        <span class="hint">Local PTY agent · Enter to send · /new fresh session · live stream</span>
+        <span class="term-actions">
+          <button type="button" id="btn-term-new" class="link-btn">New session</button>
+          <button type="button" id="btn-term-clear" class="link-btn">Clear</button>
+        </span>
+      </div>
+      <div id="terminal" data-testid="terminal"></div>
+      <pre id="ui-diagnostics" data-testid="ui-diagnostics" hidden aria-hidden="true"></pre>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

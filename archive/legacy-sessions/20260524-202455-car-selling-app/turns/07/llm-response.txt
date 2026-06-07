@@ -1,0 +1,24 @@
+## State codes
+P3 G5:X5 G6:X2 G8:X1 L1 L4 R3 S2 Q7
+
+## Questions
+### 1. G6 — scope boundary
+What features will be included in the app for the initial version?
+- A) Seller verification and safety guidance
+- B) Manual negotiation for pricing
+- C) Listing creation and browsing
+- D) Something else — [hint for sub-angle]
+
+### 2. G8 — failure unhandled
+What happens if a transaction fails or is disputed?
+- A) Automatic refund process
+- B) Manual review by support team
+- C) Seller and buyer are notified to resolve
+- D) Something else — [hint for sub-angle]
+
+### 3. G5 — success undefined
+What metrics will you track to measure success beyond completed sales?
+- A) User engagement (relist/sell again)
+- B) Customer satisfaction surveys
+- C) Time taken to complete a sale
+- D) Something else — [hint for sub-angle]

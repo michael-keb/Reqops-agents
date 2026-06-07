@@ -1,0 +1,2 @@
+{"kind": "validation", "level": "info", "msg": "turn artifacts persisted", "data": {"session_id": "tmppi53sbl_", "turn": 1, "questions": 0}, "ts": "2026-05-27T22:54:09.862+00:00", "seq": 1}
+{"kind": "validation", "level": "info", "msg": "turn artifacts persisted", "data": {"session_id": "tmpvb5bzc98", "turn": 1, "questions": 1}, "ts": "2026-05-27T22:54:09.864+00:00", "seq": 2}

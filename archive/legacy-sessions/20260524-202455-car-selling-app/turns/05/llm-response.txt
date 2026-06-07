@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X1 G3:X1 G4:X1 G5:X1 G6:X1 G7:X1 G8:X1 L1 R1 S1 Q7
+
+## Questions
+### 1. G6 — scope boundary
+What features will be included in version 1 of the app?
+- A) Manual negotiation only
+- B) Automated pricing and auctions
+- C) Instant offers
+- D) Something else — [hint for sub-angle]
+
+### 2. G4 — workflow core path
+What is the primary user journey you envision for the app?
+- A) Listing a car for sale
+- B) Browsing and searching for cars
+- C) Contacting sellers
+- D) Something else — [hint for sub-angle]
+
+### 3. G8 — failure unhandled
+What happens if a seller is reported for a fraudulent listing?
+- A) The listing is removed immediately
+- B) The seller is contacted for verification
+- C) No action is taken
+- D) Something else — [hint for sub-angle]

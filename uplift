@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Uplift v6 — chat UI + persistent PTY-wrapped Cursor agent CLI.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+exec "$ROOT/uplift-v6/start" "$@"

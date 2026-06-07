@@ -1,0 +1,20 @@
+.env
+.rubric-session.json
+__pycache__/
+.venv/
+
+# Legacy paths (now under archive/, kept for old tooling)
+runs/
+sessions/
+
+# Runtime / local dev artifacts
+uplift-v6/sessions/
+uplift-v6/logs/
+uplift-v6/.venv/
+uplift-v6/node_modules/
+uplift-v6/test-results/
+uplift-v6/playwright-report/
+uplift-reqops-e2e/.venv/
+uplift-reqops-e2e/.stack/
+agent-sdk-e2e/.venv/
+agent-sdk/.venv/

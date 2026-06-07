@@ -1,0 +1,4 @@
+{"kind": "http", "level": "info", "msg": "POST /api/reset → 200", "data": {"method": "POST", "path": "/api/reset", "status": 200, "detail": ""}, "ts": "2026-05-27T05:53:04.297+00:00", "seq": 8}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-27T05:53:04.868+00:00", "seq": 9}
+{"kind": "http", "level": "info", "msg": "GET /api/status", "data": {"method": "GET", "path": "/api/status", "status": null, "detail": ""}, "ts": "2026-05-27T05:53:07.507+00:00", "seq": 10}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T05:53:07.507+00:00", "seq": 11}

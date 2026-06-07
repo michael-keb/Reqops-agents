@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QuestionPlan",
+  "type": "object",
+  "required": ["phase", "slots"],
+  "properties": {
+    "phase": { "enum": ["P1", "P2", "P3", "P4"] },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gap", "exposure", "intent", "risk_class", "rank"],
+        "properties": {
+          "gap": { "type": "string" },
+          "exposure": { "enum": ["X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8"] },
+          "intent": { "type": "string" },
+          "risk_class": { "type": "string" },
+          "rank": { "type": "integer" },
+          "is_q7_probe": { "type": "boolean" }
+        }
+      }
+    },
+    "coaching": { "type": "array", "items": { "type": "string" } },
+    "constraints": { "type": "object" }
+  }
+}

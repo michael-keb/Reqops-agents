@@ -1,0 +1,2 @@
+# Optional — only needed for UPLIFT_SPAWN_AGENT legacy mode or dev tools.
+# Default UI uses the `agent` CLI directly (agent login), not cursor-sdk.

@@ -1,0 +1,5 @@
+# turns 12–15 (continue existing session)
+Listings should support up to 12 photos and a short video clip.
+Search needs filters for make, model, year, price, and distance.
+Onboarding should be quick — I don't want a big signup wall.
+Honestly the thing that scares me most now is fake listings with stolen photos — cloned ads.

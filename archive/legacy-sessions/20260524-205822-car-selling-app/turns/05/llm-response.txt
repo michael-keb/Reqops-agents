@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X2 G2:X1 G4:X1 G6:X1 G8:X1 GA:X4 L1 R1 S2 Q7
+
+## Questions
+### 1. G6 — scope boundary
+What features will be included in the initial version of the app?
+- A) Manual negotiation only
+- B) Automated pricing and instant offers
+- C) Auctions for listings
+- D) Something else — [hint for sub-angle]
+
+### 2. G4 — workflow path
+What is the core user journey for sellers in the app?
+- A) Create a listing, negotiate price, finalize sale
+- B) Browse listings, contact sellers, negotiate price
+- C) Report listings, verify seller, finalize sale
+- D) Something else — [hint for sub-angle]
+
+### 3. G2 — outcome definition
+What measurable outcome will indicate success for the app?
+- A) Number of listings created
+- B) Number of successful sales completed
+- C) User satisfaction ratings
+- D) Something else — [hint for sub-angle]

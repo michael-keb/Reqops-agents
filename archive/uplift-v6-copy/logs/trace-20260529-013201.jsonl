@@ -1,0 +1,7 @@
+{"kind": "sys", "level": "info", "msg": "Uplift v6 bridge starting", "data": {"port": 8798, "pid": 81211}, "ts": "2026-05-29T01:32:01.771+00:00", "seq": 1}
+{"kind": "sys", "level": "warn", "msg": "Mock agent mode (UPLIFT_MOCK_AGENT=1) — no Cursor CLI calls", "ts": "2026-05-29T01:32:01.772+00:00", "seq": 2}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-29T01:32:01.949+00:00", "seq": 3}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-29T01:32:01.950+00:00", "seq": 4}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-29T01:32:04.691+00:00", "seq": 5}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-29T01:32:04.691+00:00", "seq": 6}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-29T01:32:04.734+00:00", "seq": 7}

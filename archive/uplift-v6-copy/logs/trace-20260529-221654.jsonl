@@ -1,0 +1,5 @@
+{"kind": "validation", "level": "info", "msg": "turn artifacts persisted", "data": {"session_id": "tmpi23xsdj4", "turn": 1, "questions": 0}, "ts": "2026-05-29T22:16:54.891+00:00", "seq": 1}
+{"kind": "validation", "level": "info", "msg": "turn artifacts persisted", "data": {"session_id": "tmp1stlnauh", "turn": 1, "questions": 1}, "ts": "2026-05-29T22:16:54.893+00:00", "seq": 2}
+{"kind": "validation", "level": "info", "msg": "MCQ options normalized for UI", "data": {"session_id": "tmp1stlnauh", "turn": 1, "questions": 1}, "ts": "2026-05-29T22:16:54.893+00:00", "seq": 3}
+{"kind": "validation", "level": "info", "msg": "turn artifacts persisted", "data": {"session_id": "tmptuim63fe", "turn": 1, "questions": 1}, "ts": "2026-05-29T22:16:54.895+00:00", "seq": 4}
+{"kind": "validation", "level": "info", "msg": "MCQ options normalized for UI", "data": {"session_id": "tmptuim63fe", "turn": 1, "questions": 1}, "ts": "2026-05-29T22:16:54.895+00:00", "seq": 5}

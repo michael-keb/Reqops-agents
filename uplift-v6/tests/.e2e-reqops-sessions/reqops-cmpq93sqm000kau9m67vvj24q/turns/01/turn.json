@@ -1,0 +1,17 @@
+{
+  "turn": 1,
+  "reflection": "You answered: Start uplift discovery for: Playwright uplift cafe 1780018581987\nSession dir: /Users/mk/Documents/Clients/Praxis/01-repo \u2014 that narrows the wedge. Next we should pressure-test monetization.",
+  "questions": [
+    {
+      "rank": 1,
+      "title": "What must be true before someone trusts this with real money or access?",
+      "stem": "",
+      "options": [
+        "A) Reviews and identity verification on both sides",
+        "B) Insurance or guarantee from the platform",
+        "C) Starts inside existing social trust (friends/referrals)",
+        "D) Something else \u2014 spell out the trust mechanism"
+      ]
+    }
+  ]
+}

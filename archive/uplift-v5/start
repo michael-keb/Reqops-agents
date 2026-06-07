@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# Uplift v5 — launch Cursor Agent CLI with discovery skill + rubric.
+# No Python. The agent does all thinking.
+#
+# Usage:
+#   ./start                          interactive agent in uplift-v5
+#   ./start "Car selling app"        new session + initial pitch
+#   ./start --resume                 continue in cwd (agent resume)
+#   ./start --resume sessions/foo    continue specific session dir
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+
+slugify() {
+  echo "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-|-$//g' | cut -c1-48
+}
+
+if ! command -v agent >/dev/null 2>&1; then
+  echo "Cursor CLI not found. Install:" >&2
+  echo "  curl https://cursor.com/install -fsS | bash" >&2
+  echo "Then: agent login" >&2
+  exit 1
+fi
+
+RESUME=false
+PITCH=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --resume)
+      RESUME=true
+      shift
+      if [[ $# -gt 0 && "$1" != --* ]]; then
+        export UPLIFT_SESSION="$1"
+        shift
+      fi
+      ;;
+    -h|--help)
+      sed -n '2,10p' "$0" | sed 's/^# \?//'
+      exit 0
+      ;;
+    *)
+      PITCH="$*"
+      break
+      ;;
+  esac
+done
+
+if $RESUME; then
+  if [[ -n "${UPLIFT_SESSION:-}" ]]; then
+    export UPLIFT_SESSION="$(cd "$ROOT" && cd "$UPLIFT_SESSION" 2>/dev/null && pwd || echo "$UPLIFT_SESSION")"
+    echo ""
+    echo "────────────────────────────────────────────────────────────"
+    echo "resume · $(basename "$UPLIFT_SESSION")"
+    echo "────────────────────────────────────────────────────────────"
+    echo "\$ agent resume"
+    echo ""
+  else
+    echo ""
+    echo "────────────────────────────────────────────────────────────"
+    echo "resume · (agent picks session)"
+    echo "────────────────────────────────────────────────────────────"
+    echo "\$ agent resume"
+    echo ""
+  fi
+  exec agent resume
+fi
+
+if [[ -n "$PITCH" ]]; then
+  SLUG="$(slugify "$PITCH")"
+  TS="$(date +%Y%m%d-%H%M%S)"
+  SESSION_DIR="$ROOT/sessions/${TS}-${SLUG}"
+  mkdir -p "$SESSION_DIR/turns"
+  export UPLIFT_SESSION="$SESSION_DIR"
+
+  cat > "$SESSION_DIR/Memory.md" <<EOF
+# Discovery memory
+
+## Pitch
+$PITCH
+
+## Settled facts
+_(none yet)_
+
+## Turn log
+EOF
+
+  echo "$SESSION_DIR" > "$ROOT/sessions/.active"
+
+  echo ""
+  echo "────────────────────────────────────────────────────────────"
+  echo "turn 01 · $(basename "$SESSION_DIR") · new session"
+  echo "input: $PITCH"
+  echo "────────────────────────────────────────────────────────────"
+  echo "\$ agent -p '<prompt>' --output-format text"
+  echo ""
+  exec agent -p "You are running Uplift v5 discovery.
+
+Read .cursor/skills/uplift-discovery/SKILL.md and rubric/llm_rubric_multiplier.md first.
+
+Session directory: $SESSION_DIR
+Pitch: $PITCH
+
+Create turn 01 artifacts per the skill. Ask one discovery question." --output-format text
+fi
+
+echo "Uplift v5 — interactive discovery"
+echo "  Skill: .cursor/skills/uplift-discovery/SKILL.md"
+echo "  Rubric: rubric/"
+echo ""
+echo "Tip: ./start \"your pitch\"  or  agent login  if not authenticated"
+echo "\$ agent"
+echo ""
+exec agent

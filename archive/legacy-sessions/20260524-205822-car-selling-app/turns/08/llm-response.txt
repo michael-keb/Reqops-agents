@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X2 G2:X5 G5:X1 G6:X2 G8:X1 L1 R1 S2 Q7
+
+## Questions
+### 1. G1 — user unproven risk
+Who exactly are your primary users?
+- A) Individuals selling one personal vehicle
+- B) Dealerships or professional sellers
+- C) Buyers searching locally
+- D) Something else — [hint for sub-angle]
+
+### 2. G5 — success undefined risk
+What proves that your app has been successful?
+- A) Completed sales handoff
+- B) Number of listings created
+- C) User engagement metrics
+- D) Something else — [hint for sub-angle]
+
+### 3. G6 — scope boundary
+What features are definitely included in the v1 launch?
+- A) Seller verification
+- B) Manual negotiation only
+- C) Reporting listings
+- D) Something else — [hint for sub-angle]

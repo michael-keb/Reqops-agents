@@ -1,0 +1,1 @@
+MVP: create a listing with photos, browse and search listings, contact the seller, arrange a meetup. No in-app payments in v1.

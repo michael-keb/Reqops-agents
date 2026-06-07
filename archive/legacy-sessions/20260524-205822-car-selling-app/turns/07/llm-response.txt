@@ -1,0 +1,24 @@
+## State codes
+P3 G2:X5 G5:X1 G6:X2 G8:X1 L1 R1 S2 Q7
+
+## Questions
+### 1. G2 — outcome clarity
+What specific job do you expect the app to accomplish for users?
+- A) Facilitate car sales between private sellers and buyers.
+- B) Provide a platform for car listings and negotiations.
+- C) Ensure trust and safety in transactions.
+- D) Something else — [hint for sub-angle]
+
+### 2. G5 — success definition
+What metrics will you use to measure the success of the app?
+- A) Number of completed sales within the first month.
+- B) User engagement and repeat listings.
+- C) User satisfaction ratings.
+- D) Something else — [hint for sub-angle]
+
+### 3. G6 — scope boundary
+What features do you want to include in the first version of the app?
+- A) Basic listing and browsing functionalities.
+- B) Seller verification and reporting features.
+- C) Manual negotiation for pricing.
+- D) Something else — [hint for sub-angle]

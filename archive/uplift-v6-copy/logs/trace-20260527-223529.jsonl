@@ -1,0 +1,31 @@
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.216+00:00", "seq": 711}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.264+00:00", "seq": 712}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-27T22:35:29.264+00:00", "seq": 713}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-27T22:35:29.264+00:00", "seq": 714}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.264+00:00", "seq": 715}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.265+00:00", "seq": 716}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.265+00:00", "seq": 717}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.271+00:00", "seq": 718}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-27T22:35:29.271+00:00", "seq": 719}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-27T22:35:29.271+00:00", "seq": 720}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.272+00:00", "seq": 721}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.493+00:00", "seq": 722}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.494+00:00", "seq": 723}
+{"kind": "http", "level": "info", "msg": "GET /api/state", "data": {"method": "GET", "path": "/api/state", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.497+00:00", "seq": 724}
+{"kind": "http", "level": "info", "msg": "GET /api/state → 200", "data": {"method": "GET", "path": "/api/state", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.497+00:00", "seq": 725}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-27T22:35:29.498+00:00", "seq": 726}
+{"kind": "ws", "level": "info", "msg": "in disconnect", "data": {"direction": "in", "type": "disconnect", "detail": ""}, "ts": "2026-05-27T22:35:29.518+00:00", "seq": 727}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session", "data": {"method": "POST", "path": "/api/new-session", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.524+00:00", "seq": 728}
+{"kind": "session", "level": "info", "msg": "new session — shutdown agent and clear runtime", "ts": "2026-05-27T22:35:29.524+00:00", "seq": 729}
+{"kind": "lifecycle", "level": "info", "msg": "mock interrupt", "ts": "2026-05-27T22:35:29.524+00:00", "seq": 730}
+{"kind": "event", "level": "info", "msg": "interrupted", "data": {"type": "interrupted", "turn": 0}, "ts": "2026-05-27T22:35:29.524+00:00", "seq": 731}
+{"kind": "lifecycle", "level": "info", "msg": "mock agent stopped", "ts": "2026-05-27T22:35:29.524+00:00", "seq": 732}
+{"kind": "event", "level": "info", "msg": "stopped", "data": {"type": "stopped"}, "ts": "2026-05-27T22:35:29.524+00:00", "seq": 733}
+{"kind": "sys", "level": "info", "msg": "trace cleared", "ts": "2026-05-27T22:35:29.524+00:00", "seq": 734}
+{"kind": "http", "level": "info", "msg": "POST /api/new-session → 200", "data": {"method": "POST", "path": "/api/new-session", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.525+00:00", "seq": 735}
+{"kind": "http", "level": "info", "msg": "GET /api/health", "data": {"method": "GET", "path": "/api/health", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.826+00:00", "seq": 736}
+{"kind": "http", "level": "info", "msg": "GET /api/health → 200", "data": {"method": "GET", "path": "/api/health", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.827+00:00", "seq": 737}
+{"kind": "http", "level": "info", "msg": "GET /api/state", "data": {"method": "GET", "path": "/api/state", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:29.832+00:00", "seq": 738}
+{"kind": "http", "level": "info", "msg": "GET /api/state → 200", "data": {"method": "GET", "path": "/api/state", "status": 200, "detail": ""}, "ts": "2026-05-27T22:35:29.832+00:00", "seq": 739}
+{"kind": "ws", "level": "info", "msg": "in connect", "data": {"direction": "in", "type": "connect", "detail": ""}, "ts": "2026-05-27T22:35:29.834+00:00", "seq": 740}
+{"kind": "http", "level": "info", "msg": "POST /api/start", "data": {"method": "POST", "path": "/api/start", "status": null, "detail": ""}, "ts": "2026-05-27T22:35:30.207+00:00", "seq": 741}

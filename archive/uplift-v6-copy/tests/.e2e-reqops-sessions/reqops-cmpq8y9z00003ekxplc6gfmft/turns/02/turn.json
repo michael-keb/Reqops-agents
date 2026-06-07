@@ -1,0 +1,17 @@
+{
+  "turn": 2,
+  "reflection": "You answered: Start uplift discovery for: E2E uplift BFF 1780018325232\nSession dir: /Users/mk/Documents/Clients/Praxis/01-repos/Call-b \u2014 that narrows the wedge. Next we should pressure-test core workflow.",
+  "questions": [
+    {
+      "rank": 1,
+      "title": "What must be true before someone trusts this with real money or access?",
+      "stem": "",
+      "options": [
+        "A) Reviews and identity verification on both sides",
+        "B) Insurance or guarantee from the platform",
+        "C) Starts inside existing social trust (friends/referrals)",
+        "D) Something else \u2014 spell out the trust mechanism"
+      ]
+    }
+  ]
+}

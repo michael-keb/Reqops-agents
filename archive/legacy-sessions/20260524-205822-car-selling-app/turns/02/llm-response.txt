@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X2 G2:X1 G3:X1 G4:X1 G6:X1 L1 R1 S2 Q7
+
+## Questions
+### 1. G1 — user unproven risk
+Who exactly are the target users for your car selling app?
+- A) Private car sellers
+- B) Buyers looking for used cars
+- C) Both groups
+- D) Something else — [hint: consider other potential user segments]
+
+### 2. G2 — outcome unproven risk
+What specific job do you expect users to accomplish with your app?
+- A) List their car for sale
+- B) Search for and purchase a car
+- C) Both listing and purchasing
+- D) Something else — [hint: think about additional features or outcomes]
+
+### 3. G3 — entry unproven risk
+How does the user journey begin on your platform?
+- A) Sellers create an account
+- B) Buyers browse listings without an account
+- C) Both options available
+- D) Something else — [hint: consider onboarding processes or initial interactions]

@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X2 G2:X5 G6:X2 G8:X1 GA:X4 L1 R1 S2 Q7
+
+## Questions
+### 1. G8 — failure unhandled
+[What happens if a buyer or seller encounters a scam during the transaction?]
+- A) The app provides immediate support and guidance.
+- B) Users can report the incident, and the app takes action.
+- C) There are no specific measures in place.
+- D) Something else — [What other safety measures could be implemented?]
+
+### 2. G6 — scope boundary
+[What features will be included in version 1 of the app?]
+- A) In-app chat for buyers and sellers.
+- B) Verification processes for sellers.
+- C) Reporting mechanisms for unsafe listings.
+- D) Something else — [What additional features do you think are necessary?]
+
+### 3. G1 — user unproven risk
+[Who are the specific target users for your app?]
+- A) Individuals selling personal vehicles.
+- B) Car dealerships looking to sell inventory.
+- C) Both individuals and dealerships.
+- D) Something else — [Are there any other user groups you want to target?]

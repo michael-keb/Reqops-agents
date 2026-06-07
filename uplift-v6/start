@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Uplift v6 — web UI (default) or raw agent CLI.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+if [[ "${1:-}" == "--cli" ]]; then
+  shift
+  cd "$ROOT"
+  if ! command -v agent >/dev/null 2>&1; then
+    echo "Cursor CLI not found. Install: curl https://cursor.com/install -fsS | bash && agent login" >&2
+    exit 1
+  fi
+  exec agent "$@"
+fi
+
+exec "$ROOT/serve" "$@"

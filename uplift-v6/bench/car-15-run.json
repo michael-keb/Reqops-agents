@@ -1,0 +1,37 @@
+{
+  "session_id": "20260529-221700-car-selling-app",
+  "bridge_pid": null,
+  "turns": [
+    {
+      "turn": 12,
+      "elapsed_s": 11.36,
+      "idle": false,
+      "reply": "Listings should support up to 12 photos and a short video clip.",
+      "session_turn": 12
+    },
+    {
+      "turn": 13,
+      "elapsed_s": 14.0,
+      "idle": false,
+      "reply": "Search needs filters for make, model, year, price, and distance.",
+      "session_turn": 13
+    },
+    {
+      "turn": 14,
+      "elapsed_s": 12.21,
+      "idle": false,
+      "reply": "Onboarding should be quick \u2014 I don't want a big signup wall.",
+      "session_turn": 14
+    },
+    {
+      "turn": 15,
+      "elapsed_s": 11.54,
+      "idle": false,
+      "reply": "Honestly the thing that scares me most now is fake listings with stolen photos \u2014 cloned ads.",
+      "session_turn": 15
+    }
+  ],
+  "total_compute_s": 49.11,
+  "total_wall_s": 49.18,
+  "gap_excluded_s": 0.07
+}

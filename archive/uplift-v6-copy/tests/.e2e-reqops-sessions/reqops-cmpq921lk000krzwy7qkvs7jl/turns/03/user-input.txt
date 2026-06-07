@@ -1,0 +1,24 @@
+Playwright uplift cafe 1780018500200
+
+---
+Uplift output contract (mandatory — copy this shape exactly):
+
+## Reflection
+(1–2 sentences)
+
+## Questions
+
+### 1. Short human title
+One stem sentence grounded in the user's words.
+
+- A) First specific choice
+- B) Second specific choice
+- C) Third specific choice
+- D) Something else — …
+
+### 2. …
+### 3. …
+### 4. …
+### 5. …
+
+Forbidden: numbered lists "1. **Question**" without - A) - B) - C) - D) under each question.

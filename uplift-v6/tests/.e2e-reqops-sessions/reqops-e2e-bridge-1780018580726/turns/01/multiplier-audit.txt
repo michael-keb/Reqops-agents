@@ -1,0 +1,7 @@
+T1 multiplier audit (bridge-captured)
+
+#1 — — score=— — Who is the primary user on day one?
+#2 — — score=— — What is the core job-to-be-done in the first session?
+#3 — — score=— — How will you earn trust before money changes hands?
+#4 — — score=— — What is the smallest shippable workflow?
+#5 — — score=— — What would make someone switch from the status quo?

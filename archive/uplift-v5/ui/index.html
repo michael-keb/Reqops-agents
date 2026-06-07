@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Uplift 5 — Discovery</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Uplift <span class="v">5</span></h1>
+    <div class="meta" id="meta">checking agent…</div>
+  </header>
+
+  <div class="layout">
+    <div class="main">
+      <div id="error" class="error" hidden></div>
+
+      <section class="panel" id="startPanel">
+        <h2>Start discovery</h2>
+        <p class="hint">Same <code>agent</code> chat per session — headless output (readable in terminal panel).</p>
+        <div class="row">
+          <input id="pitchInput" type="text" placeholder="One-line pitch" />
+          <button id="startBtn">Start session</button>
+        </div>
+      </section>
+
+      <section id="sessionPanel" hidden>
+        <div class="panel" id="lastPanel" hidden>
+          <h2>Your last message</h2>
+          <div id="lastInput" class="muted"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Agent</h2>
+          <div id="response" class="response"></div>
+          <div id="options" class="options"></div>
+        </div>
+
+        <div class="panel compose">
+          <h2>Your answer</h2>
+          <textarea id="answer" rows="5" placeholder="Type your answer or pick an option above…"></textarea>
+          <div class="row end">
+            <span class="hint">Turn 1 ~30–45s · same session faster</span>
+            <div>
+              <button class="secondary" id="newBtn">New session</button>
+              <button id="submitBtn">Submit</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="panel terminal-panel">
+      <div class="terminal-head">
+        <h2>Terminal</h2>
+        <span class="term-status" id="termStatus">connecting…</span>
+        <button type="button" class="secondary small" id="termClear">Clear</button>
+      </div>
+      <pre id="terminal" class="terminal" aria-live="polite"></pre>
+    </aside>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

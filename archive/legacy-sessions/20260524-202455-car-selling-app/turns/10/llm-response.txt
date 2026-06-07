@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X1 G2:X1 G3:X2 G5:X5 G6:X2 G8:X1 GCh:X1 L1 L4 R3 S2 Q7
+
+## Questions
+### 1. G3 — entry point
+What is the first action a user takes in the app to initiate a sale?
+- A) Create a listing
+- B) Browse listings
+- C) Contact a seller
+- D) Something else — [hint for sub-angle]
+
+### 2. G8 — failure modes
+What happens if a buyer or seller encounters a scam during the transaction?
+- A) The app provides immediate support
+- B) The user can report the issue
+- C) Users are advised to avoid sharing personal information
+- D) Something else — [hint for sub-angle]
+
+### 3. G1 — user unproven risk
+Who are the specific target users for this app?
+- A) Individuals selling one personal vehicle
+- B) Car dealerships
+- C) Individuals looking to buy multiple vehicles
+- D) Something else — [hint for sub-angle]

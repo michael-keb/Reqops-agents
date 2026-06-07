@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X1 G2:X1 G3:X2 G5:X5 G6:X2 G8:X1 L1 L4 R3 S2 Q7
+
+## Questions
+### 1. G1 — user unproven risk
+Who are the primary users of the app?
+- A) Individuals selling one personal vehicle
+- B) Car dealerships looking to sell multiple vehicles
+- C) Both A and B
+- D) Something else — [hint for sub-angle]
+
+### 2. G3 — entry unproven risk
+What is the primary way users will start using the app?
+- A) Creating a listing
+- B) Browsing existing listings
+- C) Contacting sellers directly
+- D) Something else — [hint for sub-angle]
+
+### 3. G5 — success undefined risk
+What proves that the app has been successful?
+- A) A completed sale handoff
+- B) User engagement metrics
+- C) Positive seller feedback
+- D) Something else — [hint for sub-angle]

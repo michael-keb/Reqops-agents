@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X2 G2:X1 G4:X1 G6:X1 G8:X1 GA:X4 L1 R1 S2 Q7
+
+## Questions
+### 1. G1 — user unproven risk
+Who exactly are the target users for your app?
+- A) Individual car sellers
+- B) Car dealerships
+- C) Both individual sellers and dealerships
+- D) Something else — [hint: consider other potential user groups]
+
+### 2. G4 — workflow unproven risk
+What is the core path users will take when using the app?
+- A) Create a listing
+- B) Browse and search listings
+- C) Contact sellers
+- D) Something else — [hint: think about the user journey]
+
+### 3. G8 — failure unhandled risk
+What happens if a seller's listing is reported?
+- A) The listing is immediately removed
+- B) A review process is initiated
+- C) The seller is notified and can respond
+- D) Something else — [hint: consider alternative outcomes]

@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFE Agent SDK — Data Model</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0f1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 60px;
+    min-height: 100vh;
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── Page header ── */
+  .page-header { margin-bottom: 48px; }
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #e6edf3;
+    margin-bottom: 8px;
+  }
+  .page-header .subtitle {
+    font-size: 15px;
+    color: #8b949e;
+  }
+
+  /* ── Section ── */
+  .section { margin-bottom: 60px; }
+  .section-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 48px;
+  }
+  .section-header { margin-bottom: 28px; }
+  .section-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #e6edf3;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .section-header .section-sub {
+    font-size: 13px;
+  }
+
+  /* ── Two-column grid ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+  }
+  .col { display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Card ── */
+  .card {
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+
+  /* ── Card header ── */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .card-header .table-name { display: flex; align-items: center; gap: 8px; }
+  .card-header .table-name .dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .card-header .badges { display: flex; align-items: center; gap: 6px; }
+
+  /* Category badge */
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    line-height: 1.6;
+  }
+
+  /* Status badges */
+  .badge-new {
+    background: rgba(34,197,94,0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+  .badge-updated {
+    background: rgba(245,158,11,0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(245,158,11,0.25);
+  }
+
+  /* ── Card body ── */
+  .card-body {
+    background: rgba(255,255,255,0.02);
+    padding: 8px 18px 14px;
+  }
+
+  /* ── Field row ── */
+  .field {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .field:last-of-type { border-bottom: none; }
+
+  .field-badges { display: flex; gap: 4px; flex-shrink: 0; }
+  .badge-pk {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.4px;
+    padding: 1px 5px; border-radius: 3px;
+    background: rgba(251,191,36,0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251,191,36,0.25);
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+  .badge-fk {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.4px;
+    padding: 1px 5px; border-radius: 3px;
+    background: rgba(96,165,250,0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(96,165,250,0.25);
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .field-name {
+    font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+    color: #d1d5db;
+    min-width: 120px;
+    font-size: 12.5px;
+    flex-shrink: 0;
+  }
+  .field-type {
+    color: #6b7280;
+    font-size: 11px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    flex-shrink: 0;
+  }
+  .field-desc {
+    color: #4b5563;
+    font-size: 11px;
+    margin-left: auto;
+    text-align: right;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  /* NEW field highlight */
+  .field.is-new {
+    background: rgba(34,197,94,0.04);
+    border-radius: 4px;
+    padding-left: 6px;
+    margin-left: -6px;
+    border-bottom: 1px solid rgba(34,197,94,0.08);
+  }
+  .badge-field-new {
+    font-size: 9px; font-weight: 700;
+    padding: 1px 5px; border-radius: 3px;
+    background: rgba(34,197,94,0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,0.25);
+    text-transform: uppercase;
+    line-height: 1.6;
+    letter-spacing: 0.4px;
+  }
+
+  /* ── Method row (SDK / events) ── */
+  .method-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .method-row:last-of-type { border-bottom: none; }
+  .method-name {
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: #d1d5db;
+    font-size: 12px;
+  }
+  .method-ret {
+    color: #6b7280;
+    font-size: 11px;
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
+  .method-desc {
+    color: #4b5563;
+    font-size: 11px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .method-row.is-new .method-name { color: #a7f3d0; }
+  .method-row.is-new { background: rgba(34,197,94,0.04); border-radius: 4px; padding-left: 6px; margin-left: -6px; }
+
+  /* Event row */
+  .event-row {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 12px;
+    color: #d1d5db;
+  }
+  .event-row:last-of-type { border-bottom: none; }
+  .event-row.is-new { color: #a7f3d0; background: rgba(34,197,94,0.04); border-radius: 4px; padding-left: 6px; margin-left: -6px; border-bottom: 1px solid rgba(34,197,94,0.08); }
+  .event-detail { color: #6b7280; font-size: 11px; }
+
+  /* ── Relation note ── */
+  .relation-note {
+    margin-top: 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  /* ── Lifecycle diagram ── */
+  .lifecycle-diagram {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 12px;
+    color: #a7f3d0;
+    line-height: 1.9;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .lifecycle-item {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    padding: 4px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .lifecycle-item:last-of-type { border-bottom: none; }
+  .lifecycle-key {
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: #86efac;
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+  .lifecycle-val { color: #6b7280; font-size: 11px; }
+
+  /* MCP routing rows */
+  .route-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 12px;
+  }
+  .route-row:last-of-type { border-bottom: none; }
+  .route-from {
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: #fde68a;
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+  .route-arrow { color: #4b5563; flex-shrink: 0; }
+  .route-to {
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: #fbbf24;
+    flex-shrink: 0;
+  }
+  .route-impl {
+    color: #4b5563;
+    font-size: 11px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* ── API Endpoints section ── */
+  .endpoints-card {
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+  .endpoints-card-header {
+    padding: 12px 18px;
+    background: rgba(255,255,255,0.03);
+    font-size: 13px;
+    font-weight: 600;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .endpoints-body {
+    padding: 8px 18px 14px;
+    background: rgba(255,255,255,0.02);
+  }
+  .endpoint-group-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 12px 0 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    margin-bottom: 4px;
+  }
+  .endpoint-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .endpoint-row:last-of-type { border-bottom: none; }
+  .method-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 56px;
+    text-align: center;
+    line-height: 1.6;
+    flex-shrink: 0;
+  }
+  .method-get    { background: rgba(34,197,94,0.12);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.25); }
+  .method-post   { background: rgba(59,130,246,0.12); color: #60a5fa;  border: 1px solid rgba(59,130,246,0.25); }
+  .method-delete { background: rgba(239,68,68,0.12);  color: #f87171;  border: 1px solid rgba(239,68,68,0.25); }
+  .method-put    { background: rgba(245,158,11,0.12); color: #fbbf24;  border: 1px solid rgba(245,158,11,0.25); }
+
+  .endpoint-path {
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: #d1d5db;
+    font-size: 12px;
+    min-width: 300px;
+    flex-shrink: 0;
+  }
+  .endpoint-desc {
+    color: #6b7280;
+    font-size: 11px;
+  }
+  .endpoint-new-badge {
+    margin-left: auto;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.4px;
+    padding: 1px 6px; border-radius: 3px;
+    background: rgba(34,197,94,0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,0.25);
+    text-transform: uppercase;
+    line-height: 1.6;
+    flex-shrink: 0;
+  }
+
+  /* Color helpers — generated per category */
+  /* blue */
+  .ch-blue   { background: rgba(59,130,246,0.15); color: #93c5fd; }
+  .dot-blue  { background: #3b82f6; }
+  .badge-blue { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+  /* orange */
+  .ch-orange   { background: rgba(249,115,22,0.15); color: #fdba74; }
+  .dot-orange  { background: #f97316; }
+  .badge-orange { background: rgba(249,115,22,0.12); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+  /* purple */
+  .ch-purple   { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+  .dot-purple  { background: #a855f7; }
+  .badge-purple { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.2); }
+  /* pink */
+  .ch-pink   { background: rgba(236,72,153,0.15); color: #f9a8d4; }
+  .dot-pink  { background: #ec4899; }
+  .badge-pink { background: rgba(236,72,153,0.12); color: #f472b6; border: 1px solid rgba(236,72,153,0.2); }
+  /* cyan */
+  .ch-cyan   { background: rgba(6,182,212,0.15); color: #67e8f9; }
+  .dot-cyan  { background: #06b6d4; }
+  .badge-cyan { background: rgba(6,182,212,0.12); color: #22d3ee; border: 1px solid rgba(6,182,212,0.2); }
+  /* green */
+  .ch-green   { background: rgba(34,197,94,0.15); color: #86efac; }
+  .dot-green  { background: #22c55e; }
+  .badge-green { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+  /* amber */
+  .ch-amber   { background: rgba(245,158,11,0.15); color: #fde68a; }
+  .dot-amber  { background: #f59e0b; }
+  .badge-amber { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE HEADER
+  ═══════════════════════════════════════════════ -->
+  <div class="page-header">
+    <h1>AFE Agent SDK — Data Model</h1>
+    <p class="subtitle">Schema reference. <strong>Sessions bind to a durable volume; sandboxes are ephemeral compute leases that mount that volume.</strong> Sandbox death doesn't kill the session — a new one gets provisioned with the same volume+subpath, and the CLI resumes from the transcript on disk.</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 1: DATA MODEL
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Data Model</h2>
+      <p class="section-sub" style="color:#8b949e;">Three layers: Postgres on the server (durable agent/sandbox/session records + event log), in-memory SessionState (live runtime), and SQLite on the client (resume hints).</p>
+    </div>
+
+    <div class="two-col">
+      <!-- LEFT COL -->
+      <div class="col">
+
+        <!-- agents table -->
+        <div class="card">
+          <div class="card-header ch-blue">
+            <div class="table-name">
+              <span class="dot dot-blue"></span>
+              agents
+            </div>
+            <div class="badges">
+              <span class="badge badge-blue">Postgres</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <div class="field-badges"><span class="badge-pk">PK</span></div>
+              <span class="field-name">id</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">UUID</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">name</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">human label</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">config</span>
+              <span class="field-type">JSONB</span>
+              <span class="field-desc">JSON blob (AgentConfig)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- volumes table (NEW) -->
+        <div class="card">
+          <div class="card-header ch-green">
+            <div class="table-name">
+              <span class="dot dot-green"></span>
+              volumes
+            </div>
+            <div class="badges">
+              <span class="badge badge-new">New</span>
+              <span class="badge badge-green">Postgres</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field is-new">
+              <div class="field-badges"><span class="badge-pk">PK</span></div>
+              <span class="field-name">id</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">vol_&lt;hex&gt;</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"></div>
+              <span class="field-name">name</span>
+              <span class="field-type">TEXT UNIQUE NOT NULL</span>
+              <span class="field-desc">user-chosen, e.g. "my-project"</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"></div>
+              <span class="field-name">provider</span>
+              <span class="field-type">TEXT NOT NULL</span>
+              <span class="field-desc">"daytona" | "docker" | "local"</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"></div>
+              <span class="field-name">provider_ref</span>
+              <span class="field-type">TEXT NOT NULL</span>
+              <span class="field-desc">Daytona volume UUID / Docker vol name / host path</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"></div>
+              <span class="field-name">status</span>
+              <span class="field-type">TEXT NOT NULL</span>
+              <span class="field-desc">default 'ready'</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"></div>
+              <span class="field-name">created_at</span>
+              <span class="field-type">TIMESTAMPTZ</span>
+              <span class="field-desc">default now()</span>
+            </div>
+            <div class="relation-note">Durable storage, independent of any sandbox. Lifecycle via <code style="font-family:monospace;color:#fb923c;">/volumes</code> CRUD. Volumes hold user data only — the supervisor + ACP bins ship in the agent-sdk image at <code style="font-family:monospace;color:#fb923c;">/opt/agent-sdk/runtime/</code>.</div>
+            <div class="relation-note" style="margin-top:6px;">On-volume layout:<br>
+              &nbsp;&nbsp;<code style="font-family:monospace;color:#fb923c;">agents/&lt;agent_id&gt;/</code> — per-agent slice (default HOME): <code style="font-family:monospace;color:#fb923c;">snapshot.tar</code> (HOME contents, refreshed each turn-end) + <code style="font-family:monospace;color:#fb923c;">logs/</code><br>
+              &nbsp;&nbsp;<code style="font-family:monospace;color:#fb923c;">workspaces/&lt;name&gt;/</code> — opt-in shared HOME, mounted at <code style="font-family:monospace;color:#fb923c;">/home/agent</code> for sessions that set <code style="font-family:monospace;color:#fb923c;">sessions.workspace=&lt;name&gt;</code>. Multiple agents passing the same name share the directory and see each other's writes via the kernel. Rejected on daytona.<br>
+              &nbsp;&nbsp;<code style="font-family:monospace;color:#fb923c;">shared/&lt;name&gt;/</code> — opt-in shared folder, mounted at <code style="font-family:monospace;color:#fb923c;">/mnt/&lt;name&gt;</code> for agents that list it in <code style="font-family:monospace;color:#fb923c;">config.shared_mounts</code></div>
+          </div>
+        </div>
+
+        <!-- sandbox_state JSONB on sessions -->
+        <div class="card">
+          <div class="card-header ch-cyan">
+            <div class="table-name">
+              <span class="dot dot-cyan"></span>
+              sessions.sandbox_state <span style="font-size:11px;color:#94a3b8;font-weight:400;">— JSONB on the sessions row</span>
+            </div>
+            <div class="badges">
+              <span class="badge badge-cyan">Pydantic union</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="relation-note" style="margin-top:0;margin-bottom:10px;">
+              Sandbox identity is <strong>not</strong> a separate table — it's a discriminated-union JSONB blob on the session row, owned by the in-process <code style="font-family:monospace;color:#fb923c;">SessionPool</code>. The recipe lives here too, so deleting a sandbox can't lose its provisioning fingerprint.
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">type</span>
+              <span class="field-type">"daytona" | "docker" | "unix_local" | "modal" | "unknown"</span>
+              <span class="field-desc">discriminator — picks the concrete SandboxState class</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">sandbox_ref</span>
+              <span class="field-type">TEXT | null</span>
+              <span class="field-desc">opaque provider ref (Daytona UUID, Docker container id, local PID-as-string). Null between cold-create and first start.</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">listen_port</span>
+              <span class="field-type">INTEGER | null</span>
+              <span class="field-desc">port-based providers (docker/local/modal). Null for daytona — URL comes from the signed-preview API.</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">snapshot_path</span>
+              <span class="field-type">TEXT | null</span>
+              <span class="field-desc">volume-relative path to the latest filesystem snapshot</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">snapshot_version</span>
+              <span class="field-type">INTEGER</span>
+              <span class="field-desc">monotonic version, bumped on each release/snapshot write</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">recipe</span>
+              <span class="field-type">{ agent_type, dockerfile?, shared_mounts[], root?, pre_start_commands[] }</span>
+              <span class="field-desc">provisioning fingerprint — replayed on Type-2 recovery (replacement sandbox)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- sessions table -->
+        <div class="card">
+          <div class="card-header ch-orange">
+            <div class="table-name">
+              <span class="dot dot-orange"></span>
+              sessions
+            </div>
+            <div class="badges">
+              <span class="badge badge-updated">Updated</span>
+              <span class="badge badge-orange">Postgres</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <div class="field-badges"><span class="badge-pk">PK</span></div>
+              <span class="field-name">id</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">session_id</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"><span class="badge-fk">FK</span></div>
+              <span class="field-name">agent_id</span>
+              <span class="field-type">TEXT NOT NULL</span>
+              <span class="field-desc">→ agents, ON DELETE CASCADE</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"><span class="badge-fk">FK</span></div>
+              <span class="field-name">volume_id</span>
+              <span class="field-type">TEXT NOT NULL</span>
+              <span class="field-desc">→ volumes, ON DELETE RESTRICT</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"></div>
+              <span class="field-name">sandbox_state</span>
+              <span class="field-type">JSONB</span>
+              <span class="field-desc">discriminated union (daytona | docker | unix_local | modal | unknown). Holds <code style="font-family:monospace;color:#fb923c;">sandbox_ref</code>, <code style="font-family:monospace;color:#fb923c;">listen_port</code>, <code style="font-family:monospace;color:#fb923c;">snapshot_path</code>, <code style="font-family:monospace;color:#fb923c;">snapshot_version</code>, and the provisioning <code style="font-family:monospace;color:#fb923c;">recipe</code>.</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">inner_session_id</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">ACP session handle (used for --resume)</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">env</span>
+              <span class="field-type">JSONB NOT NULL</span>
+              <span class="field-desc">non-secret env, default {}</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">secrets</span>
+              <span class="field-type">JSONB NOT NULL</span>
+              <span class="field-desc">default {} (plaintext for now)</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"><span class="badge-field-new">new</span></div>
+              <span class="field-name">cwd</span>
+              <span class="field-type">TEXT NOT NULL</span>
+              <span class="field-desc">default '/tmp'. Per-conversation working directory — determines the JSONL hash (~/.claude/projects/&lt;hash&gt;/&lt;inner_sid&gt;.jsonl), so frozen at session-create time. Moved from AgentConfig 2026-04-23.</span>
+            </div>
+            <div class="field is-new">
+              <div class="field-badges"><span class="badge-field-new">new</span></div>
+              <span class="field-name">pre_start_commands</span>
+              <span class="field-type">JSONB NOT NULL</span>
+              <span class="field-desc">default []. Caller-supplied shell commands run inside the sandbox before the supervisor starts. Persisted so they re-run on Type 2 recovery (replacement sandbox). Skill-install commands are merged separately at run time.</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">created_at</span>
+              <span class="field-type">TIMESTAMPTZ</span>
+            </div>
+            <div class="relation-note">Session binds to a <strong>volume</strong> (durable). The active compute lease is owned in-process by the <code style="font-family:monospace;color:#fb923c;">SessionPool</code>; <code style="font-family:monospace;color:#fb923c;">sandbox_state</code> is its durable cold-recovery fingerprint, swapped transparently when the sandbox dies or is replaced.</div>
+          </div>
+        </div>
+
+        <!-- session_log table -->
+        <div class="card">
+          <div class="card-header ch-orange">
+            <div class="table-name">
+              <span class="dot dot-orange"></span>
+              session_log
+            </div>
+            <div class="badges">
+              <span class="badge badge-orange">Postgres</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <div class="field-badges"><span class="badge-pk">PK</span></div>
+              <span class="field-name">id</span>
+              <span class="field-type">SERIAL</span>
+              <span class="field-desc">auto-increment</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"><span class="badge-fk">FK</span></div>
+              <span class="field-name">session_id</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">→ sessions</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"><span class="badge-fk">FK</span></div>
+              <span class="field-name">agent_id</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">→ agents</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">event_type</span>
+              <span class="field-type">TEXT</span>
+              <span class="field-desc">user_message | assistant_message | reasoning | tool_call | tool_result | usage | turn_end | error</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">payload</span>
+              <span class="field-type">JSONB</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">created_at</span>
+              <span class="field-type">TIMESTAMPTZ</span>
+              <span class="field-desc">default now()</span>
+            </div>
+            <div class="relation-note">Append-only telemetry. Query via <code style="font-family:monospace;color:#fb923c;">GET /sessions/{id}/log</code>.</div>
+          </div>
+        </div>
+
+        <!-- SSE Events -->
+        <div class="card">
+          <div class="card-header ch-pink">
+            <div class="table-name">
+              <span class="dot dot-pink"></span>
+              SSE Events
+            </div>
+            <div class="badges">
+              <span class="badge badge-pink">streaming</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="event-row">agent_message_delta | agent_message_chunk <span class="event-detail">{ content: { text } }</span></div>
+            <div class="event-row">agent_thought_chunk <span class="event-detail">{ content: { text|thinking } }</span></div>
+            <div class="event-row">tool_call | execute_tool_started <span class="event-detail">{ _meta: { claudeCode: { toolName } }, rawInput }</span></div>
+            <div class="event-row is-new">tool_call_update <span class="event-detail">{ _meta: { claudeCode: { toolResponse } } }</span></div>
+            <div class="event-row">usage_updated | usage_update <span class="event-detail">{ cost }</span></div>
+            <div class="event-row">JSON-RPC result <span class="event-detail">{ stopReason }</span> <span class="event-detail">— prompt done</span></div>
+            <div class="event-row">JSON-RPC error <span class="event-detail">{ code, message }</span></div>
+            <div class="relation-note">Raw ACP events proxied from the supervisor via <code style="font-family:monospace;color:#f472b6;">GET /sessions/{session_id}/events</code>. Attributed blocks are emitted with SSE tag <code style="font-family:monospace;color:#f472b6;">event: rpc:&lt;rpc_id&gt;</code>.</div>
+          </div>
+        </div>
+
+        <!-- AcpClient -->
+        <div class="card">
+          <div class="card-header ch-amber">
+            <div class="table-name">
+              <span class="dot dot-amber"></span>
+              AcpClient
+            </div>
+            <div class="badges">
+              <span class="badge badge-amber">JSON-RPC 2.0</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="endpoint-group-label">Session lifecycle</div>
+            <div class="method-row">
+              <span class="method-name">initialize(session_id, agent, cwd, mcp_servers)</span>
+              <span class="method-ret">→ dict</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">prompt(session_id, message, rpc_id)</span>
+              <span class="method-ret">→ (rpc_id, PromptResponse)</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">list_sessions(session_id)</span>
+              <span class="method-ret">→ list[dict]</span>
+            </div>
+            <div class="endpoint-group-label" style="padding-top:8px;">Configuration</div>
+            <div class="method-row">
+              <span class="method-name">set_mode(session_id, mode)</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">set_model(session_id, model)</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">set_thought_level(session_id, level)</span>
+            </div>
+            <div class="endpoint-group-label" style="padding-top:8px;">Internal</div>
+            <div class="method-row">
+              <span class="method-name">health()</span>
+              <span class="method-ret">→ dict</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">get_inner_session_id(session_id)</span>
+              <span class="method-ret">→ str?</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">aclose()</span>
+            </div>
+            <div class="relation-note">Thin async Python client for a JSON-RPC 2.0 ACP agent over POST+SSE. One instance per supervisor process; talks to <code style="font-family:monospace;color:#22d3ee;">POST /v1/acp/{session_id}</code>.</div>
+          </div>
+        </div>
+
+      </div><!-- /left col -->
+
+      <!-- RIGHT COL -->
+      <div class="col">
+
+        <!-- AgentConfig -->
+        <div class="card">
+          <div class="card-header ch-blue">
+            <div class="table-name">
+              <span class="dot dot-blue"></span>
+              AgentConfig
+            </div>
+            <div class="badges">
+              <span class="badge badge-blue">JSON blob</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">agent_type</span>
+              <span class="field-type">str</span>
+              <span class="field-desc">claude | codex | opencode | gemini | cline | deepagents | openhands | goose</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">model</span>
+              <span class="field-type">str?</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">mcp_servers</span>
+              <span class="field-type">dict?</span>
+              <span class="field-desc">name → config</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">skills</span>
+              <span class="field-type">list | dict?</span>
+              <span class="field-desc">npx skills sources</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">mode</span>
+              <span class="field-type">str?</span>
+              <span class="field-desc">"default" | "plan" | "bypassPermissions" | "acceptEdits" | …</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">thought_level</span>
+              <span class="field-type">str?</span>
+              <span class="field-desc">"low" | "medium" | "high" — Claude's "thinking" config_id</span>
+            </div>
+            <div class="relation-note">Stored as JSON in agents.config column. Pure agent identity — cloneable, no per-invocation state. <code style="font-family:monospace;color:#fb923c;">mode</code> + <code style="font-family:monospace;color:#fb923c;">thought_level</code> are persisted here so cold-recovery (Type-2) replays them via <code style="font-family:monospace;color:#fb923c;">_attach_acp</code>.</div>
+            <div class="relation-note" style="margin-top:6px;">
+              <strong>Not on AgentConfig:</strong><br>
+              &nbsp;&nbsp;<code style="font-family:monospace;color:#fb923c;">cwd</code> → <code style="font-family:monospace;color:#fb923c;">sessions.cwd</code> (JSONL-hash key; per-conversation)<br>
+              &nbsp;&nbsp;<code style="font-family:monospace;color:#fb923c;">workspace</code> → <code style="font-family:monospace;color:#fb923c;">sessions.workspace</code> (opt-in shared HOME name; overrides <code style="font-family:monospace;color:#fb923c;">agents/&lt;id&gt;/</code> with <code style="font-family:monospace;color:#fb923c;">workspaces/&lt;name&gt;/</code>)<br>
+              &nbsp;&nbsp;<code style="font-family:monospace;color:#fb923c;">dockerfile</code> + <code style="font-family:monospace;color:#fb923c;">shared_mounts</code> + <code style="font-family:monospace;color:#fb923c;">root</code> + <code style="font-family:monospace;color:#fb923c;">pre_start_commands</code> → <code style="font-family:monospace;color:#fb923c;">sandbox_state.recipe</code> (frozen at provision time)<br>
+              &nbsp;&nbsp;<code style="font-family:monospace;color:#fb923c;">env</code> → <code style="font-family:monospace;color:#fb923c;">sessions.env</code> / <code style="font-family:monospace;color:#fb923c;">sessions.secrets</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agent SDK -->
+        <div class="card">
+          <div class="card-header ch-cyan">
+            <div class="table-name">
+              <span class="dot dot-cyan"></span>
+              Agent SDK
+            </div>
+            <div class="badges">
+              <span class="badge badge-cyan">client</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="method-row">
+              <span class="method-name">Agent(name, agent_type, provider, model, cwd, root, api_url, mcp_servers, skills, db, session_id, sandbox_ref, dockerfile, oauth_token, api_key, volume_id, pre_start_commands, shared_mounts, secrets)</span>
+            </div>
+            <div class="endpoint-group-label" style="padding-top:8px;">Class methods / construction</div>
+            <div class="method-row">
+              <span class="method-name">Agent.from_config(name, config, **kwargs)</span>
+              <span class="method-ret">→ Agent</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">Agent.from_file(config_path, **kwargs)</span>
+              <span class="method-ret">→ Agent</span>
+              <span class="method-desc">JSON or YAML</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">clone(name=None, **overrides)</span>
+              <span class="method-ret">→ Agent</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">__repr__()</span>
+            </div>
+            <div class="endpoint-group-label" style="padding-top:8px;">Messaging</div>
+            <div class="method-row is-new">
+              <span class="method-name">arun(message, *, interrupt=False)</span>
+              <span class="method-ret">→ str</span>
+              <span class="method-desc">async, full response</span>
+            </div>
+            <div class="method-row is-new">
+              <span class="method-name">astream(message, *, interrupt=False)</span>
+              <span class="method-ret">→ AsyncIterator[Event]</span>
+              <span class="method-desc">yields Event dicts, str(ev) = text</span>
+            </div>
+            <div class="method-row is-new">
+              <span class="method-name">send(message, *, interrupt=False)</span>
+              <span class="method-ret">→ str</span>
+              <span class="method-desc">fire-and-forget, returns rpc_id</span>
+            </div>
+            <div class="method-row is-new">
+              <span class="method-name">events()</span>
+              <span class="method-ret">→ ctx[AsyncIterator[Event]]</span>
+              <span class="method-desc">long-lived SSE stream</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">run(message, timeout=None, *, interrupt=False)</span>
+              <span class="method-ret">→ str</span>
+              <span class="method-desc">sync wrapper</span>
+            </div>
+            <div class="endpoint-group-label" style="padding-top:8px;">Session management</div>
+            <div class="method-row">
+              <span class="method-name">configure(**kwargs)</span>
+              <span class="method-desc">mode, model, thought_level</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">cancel()</span>
+              <span class="method-desc">cancel running prompt</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">reset_session()</span>
+            </div>
+            <div class="endpoint-group-label" style="padding-top:8px;">Lifecycle</div>
+            <div class="method-row">
+              <span class="method-name">aclose()</span>
+              <span class="method-desc">cleanup</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">__aenter__ / __aexit__</span>
+              <span class="method-desc">async context manager</span>
+            </div>
+            <div class="relation-note">Auto-provisions via <code style="font-family:monospace;color:#22d3ee;">POST /sessions</code> (eager by default). Optional session persistence via SqliteSessionDriver.</div>
+          </div>
+        </div>
+
+        <!-- SessionState -->
+        <div class="card">
+          <div class="card-header ch-purple">
+            <div class="table-name">
+              <span class="dot dot-purple"></span>
+              SessionState
+            </div>
+            <div class="badges">
+              <span class="badge badge-purple">in-memory</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name" style="min-width:150px;">SESSIONS</span>
+              <span class="field-type">dict[str, SessionState]</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">session_id</span>
+              <span class="field-type">str</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">agent_id</span>
+              <span class="field-type">str</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">sandbox_id</span>
+              <span class="field-type">str</span>
+              <span class="field-desc">opaque sandbox ref returned in API responses. The runtime is owned by <code style="font-family:monospace;color:#fb923c;">SessionPool</code> / <code style="font-family:monospace;color:#fb923c;">SandboxSession</code>.</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">agent_type</span>
+              <span class="field-type">str</span>
+              <span class="field-desc">default "claude"</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name" style="min-width:150px;">acp_session_id</span>
+              <span class="field-type">str?</span>
+              <span class="field-desc">ephemeral, created on connect</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name" style="min-width:150px;">inner_session_id</span>
+              <span class="field-type">str?</span>
+              <span class="field-desc">ephemeral, created on connect</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">client</span>
+              <span class="field-type">object?</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">shutdown</span>
+              <span class="field-type">asyncio.Event</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">last_event_id</span>
+              <span class="field-type">str?</span>
+              <span class="field-desc">SSE cursor — skip replay events</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">last_activity</span>
+              <span class="field-type">float</span>
+              <span class="field-desc">time.time() — updated on activity</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">agent_busy</span>
+              <span class="field-type">bool</span>
+              <span class="field-desc">True between prompt and stopReason</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">turn_completed_at</span>
+              <span class="field-type">float?</span>
+              <span class="field-desc">when last stopReason arrived</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_reader_task</span>
+              <span class="field-type">asyncio.Task?</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_reader_alive</span>
+              <span class="field-type">bool</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_log_chain</span>
+              <span class="field-type">asyncio.Task?</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">active_rpc_id</span>
+              <span class="field-type">str?</span>
+              <span class="field-desc">currently running prompt id</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">pending_prompts</span>
+              <span class="field-type">deque[PendingPrompt]</span>
+              <span class="field-desc">FIFO queue for submitted prompts</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_prompt_ready</span>
+              <span class="field-type">asyncio.Event</span>
+              <span class="field-desc">wake scheduler when new prompt arrives</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_prompt_done</span>
+              <span class="field-type">asyncio.Event</span>
+              <span class="field-desc">set when active prompt reaches terminal state</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_scheduler_task</span>
+              <span class="field-type">asyncio.Task?</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_session_subscribers</span>
+              <span class="field-type">list[Queue]</span>
+              <span class="field-desc">subscribers receiving all session events</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">_rpc_subscribers</span>
+              <span class="field-type">dict[str, list[Queue]]</span>
+              <span class="field-desc">per-rpc filtered subscriber queues</span>
+            </div>
+            <div class="field">
+              <div class="field-badges"></div>
+              <span class="field-name">errors</span>
+              <span class="field-type">deque(maxlen=100)</span>
+            </div>
+            <div class="endpoint-group-label" style="padding-top:8px;">Methods</div>
+            <div class="method-row">
+              <span class="method-name">subscribe_session()</span>
+              <span class="method-ret">→ asyncio.Queue</span>
+              <span class="method-desc">register session-scoped subscriber queue</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">unsubscribe_session(q)</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">subscribe_rpc(rpc_id)</span>
+              <span class="method-ret">→ asyncio.Queue</span>
+              <span class="method-desc">register rpc-scoped subscriber queue</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">unsubscribe_rpc(rpc_id, q)</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">dispatch(tag, item)</span>
+              <span class="method-desc">route to rpc-scoped + session-scoped subscribers</span>
+            </div>
+            <div class="method-row">
+              <span class="method-name">broadcast(item)</span>
+              <span class="method-desc">push to all subscribers; kick-on-full</span>
+            </div>
+            <div class="relation-note">In-memory runtime state. Persistent SSE reader connects once at session creation and fans out to both session-scoped and rpc-scoped queues. Slow subscribers are kicked via _KICK_SENTINEL. ACP/inner session IDs are ephemeral — recreated on connect, restored via native <code style="font-family:monospace;color:#f472b6;">session/load</code> on resume.</div>
+          </div>
+        </div>
+
+      </div><!-- /right col -->
+    </div>
+  </div>
+
+
+
+
+  <hr class="section-divider">
+
+  <div class="section">
+    <div class="section-header">
+      <h2>REST API</h2>
+      <p class="section-sub" style="color:#8b949e;">
+        The full endpoint reference lives in <a href="rest-api.html" style="color:#22d3ee;">rest-api.html</a> — request bodies, response shapes, status codes. Kept as a separate doc so this page stays focused on the schema / relations.
+      </p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

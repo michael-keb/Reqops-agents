@@ -1,0 +1,24 @@
+## State codes
+P3 G1:X1 G2:X1 G3:X2 G5:X5 G6:X2 G8:X1 GCh:X1 L1 L4 R3 S2 Q7
+
+## Questions
+### 1. G1 — user unproven risk
+Who are the specific users that you are targeting for your app?
+- A) Individuals selling one personal vehicle
+- B) Car enthusiasts looking for deals
+- C) Local dealerships
+- D) Something else — [hint: consider other potential user groups]
+
+### 2. G8 — failure unhandled risk
+What specific measures will you implement to handle scams and ensure safe meetups?
+- A) User verification processes
+- B) In-app safety features and guidelines
+- C) Reporting mechanisms for suspicious activity
+- D) Something else — [hint: think about additional strategies]
+
+### 3. G6 — scope boundary
+What features will you include in the first version of the app to address fraud prevention?
+- A) Seller verification
+- B) User reviews and ratings
+- C) Safety tips for meetups
+- D) Something else — [hint: consider other features that could enhance safety]

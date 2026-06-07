@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+dist/
+build/
+.DS_Store
+.env
+node_modules/
+.claude/
+
+# Local Postgres + nginx for launch_server_test.sh
+.postgres-env/
+.postgres-data/
+.nginx-env/
+
+# Worktrees for subagent-driven development
+.worktrees/
+
+# Benchmark transient outputs (results files, py-spy flame graphs, server logs)
+logs/
+benchmark/scale/results.jsonl
+benchmark/scale/tune_results.jsonl
+benchmark/scale/flame-*.svg
