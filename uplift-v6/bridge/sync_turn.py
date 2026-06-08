@@ -10,10 +10,16 @@ from typing import Any
 
 from . import session as sess
 from . import trace
-from .discovery_format import bootstrap_message, wrap_discovery_message
+from .discovery_context import valid_discovery_response
+from .discovery_format import (
+    WORKSHOP_CODE_RETRY_MESSAGE,
+    WORKSHOP_TOOL_RETRY_MESSAGE,
+    bootstrap_message,
+    wrap_discovery_message,
+)
 from .headless_agent import HeadlessAgent
 from .mock_agent import MockAgent
-from .sdk_agent import SdkAgent
+from .sdk_agent import ChatOnlyToolViolation, InvalidWorkshopResponse, SdkAgent
 
 ROOT = Path(__file__).resolve().parent.parent
 MOCK = os.environ.get("UPLIFT_MOCK_AGENT", "").strip() in ("1", "true", "yes")
@@ -39,17 +45,49 @@ def _turn_lock(session_id: str) -> threading.Lock:
     return _global_turn_lock
 
 
+def _discovery_workspace(session_dir: Path) -> Path:
+    """Isolate discovery agent cwd to the workshop session folder only."""
+    session_dir.mkdir(parents=True, exist_ok=True)
+    return session_dir.resolve()
+
+
 def _make_agent(session_dir: Path) -> AgentLike:
+    workspace = _discovery_workspace(session_dir)
     if MOCK:
-        return MockAgent(cwd=ROOT, env_extra={"UPLIFT_SESSION": str(session_dir)})
+        return MockAgent(cwd=workspace, env_extra={"UPLIFT_SESSION": str(session_dir)})
     if _discovery_runner() == "sdk":
         sid = session_dir.name
         agent = _sdk_agents.get(sid)
+        if agent is not None and (
+            not agent.chat_only or agent.cwd.resolve() != workspace
+        ):
+            try:
+                agent.stop()
+            except Exception as exc:
+                trace.warn("lifecycle", "discovery agent stop failed", detail=str(exc))
+            del _sdk_agents[sid]
+            agent = None
         if agent is None:
-            agent = SdkAgent(cwd=ROOT, session_dir=session_dir)
+            agent = SdkAgent(
+                cwd=workspace,
+                session_dir=session_dir,
+                chat_only=True,
+                cli_mode="ask",
+            )
             _sdk_agents[sid] = agent
         return agent
-    return HeadlessAgent(cwd=ROOT, env_extra={"UPLIFT_SESSION": str(session_dir)})
+    return HeadlessAgent(
+        cwd=workspace,
+        env_extra={"UPLIFT_SESSION": str(session_dir)},
+        cli_mode="ask",
+    )
+
+
+def _latest_response(events: list[dict]) -> str:
+    last = next((e for e in reversed(events) if e.get("type") == "turn_complete"), None)
+    if not last:
+        return ""
+    return str(last.get("response") or "").strip()
 
 
 def run_turn(
@@ -66,10 +104,10 @@ def run_turn(
         if on_progress:
             on_progress(msg)
 
-    wrapped = wrap_discovery_message(text)
     events: list[dict] = []
     agent = _make_agent(path)
     runner = _discovery_runner()
+    max_attempts = 3
 
     def on_event(payload: dict) -> None:
         events.append(payload)
@@ -80,15 +118,61 @@ def run_turn(
             prog(f"Done · {payload.get('elapsed_s', '?')}s")
         elif kind in ("turn_failed", "exit", "turn_timeout"):
             prog(payload.get("message") or "Turn failed")
+        elif kind == "tool_violation":
+            prog("Tool use blocked — retrying as workshop…")
+        elif kind == "workshop_invalid":
+            prog("Invalid output — retrying workshop format…")
 
     agent.on_event(on_event)
+
+    user_text = text.strip()
+    wrapped = wrap_discovery_message(user_text, session_dir=path)
 
     with _turn_lock(session_id):
         prog("Connecting to agent-sdk…" if runner == "sdk" else "Connecting to agent…")
         if not agent.alive:
             agent.start()
-        prog("Thinking…")
-        agent.send(wrapped, on_progress=prog)
+        for attempt in range(1, max_attempts + 1):
+            prog("Thinking…")
+            prompt = wrapped
+            if attempt == 2:
+                prompt = f"{WORKSHOP_TOOL_RETRY_MESSAGE}\n\n{wrapped}"
+            elif attempt >= 3:
+                prompt = f"{WORKSHOP_CODE_RETRY_MESSAGE}\n\n{WORKSHOP_TOOL_RETRY_MESSAGE}\n\n{wrapped}"
+            try:
+                agent.send(prompt, on_progress=prog)
+            except ChatOnlyToolViolation:
+                if attempt >= max_attempts:
+                    raise RuntimeError(
+                        "Discovery agent attempted file tools after retries — workshop is chat-only"
+                    ) from None
+                trace.warn("validation", "discovery tool violation — retrying turn", attempt=attempt)
+                prog("Retrying without tools…")
+                continue
+            except InvalidWorkshopResponse:
+                if attempt >= max_attempts:
+                    raise RuntimeError(
+                        "Discovery agent failed to produce Reflection + 5 MCQs after retries"
+                    ) from None
+                trace.warn("validation", "discovery invalid output — retrying turn", attempt=attempt)
+                prog("Retrying workshop format…")
+                continue
+
+            if MOCK:
+                break
+            response = _latest_response(events)
+            if valid_discovery_response(response):
+                break
+            if attempt >= max_attempts:
+                raise RuntimeError(
+                    "Discovery agent returned non-workshop output (expected Reflection + Questions)"
+                )
+            trace.warn(
+                "validation",
+                "discovery output rejected — not valid workshop MCQs",
+                attempt=attempt,
+            )
+            prog("Invalid workshop output — retrying…")
 
     last = next((e for e in reversed(events) if e.get("type") == "turn_complete"), None)
     failed = next(

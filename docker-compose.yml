@@ -1,0 +1,168 @@
+# Full ReqOps + Uplift + agent-sdk stack on one machine.
+# See deploy/README.md for setup and VPS notes.
+
+name: reqops-stack
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./deploy/postgres/init-databases.sh:/docker-entrypoint-initdb.d/01-init-databases.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  agent-sdk:
+    build:
+      context: ./agent-sdk
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: 7778
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/agent_sdk_server
+      CURSOR_API_KEY: ${CURSOR_API_KEY:?set CURSOR_API_KEY in .env}
+      DAYTONA_API_KEY: ${DAYTONA_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      AGENT_SDK_ORIGIN: ${AGENT_SDK_ORIGIN:-production}
+      AGENT_SDK_LOCAL_VOL_ROOT: /data/volumes
+    volumes:
+      - agent_sdk_volumes:/data/volumes
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "7778"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:7778/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  uplift:
+    build:
+      context: ./uplift-v6
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      UPLIFT_HOST: 0.0.0.0
+      UPLIFT_PORT: 8786
+      UPLIFT_AGENT_MODE: headless
+      UPLIFT_DISCOVERY_RUNNER: sdk
+      UPLIFT_SIGNALS_RUNNER: sdk
+      UPLIFT_AGENT_SDK_URL: http://agent-sdk:7778
+      UPLIFT_SDK_PROVIDER: ${UPLIFT_SDK_PROVIDER:-unix_local}
+      UPLIFT_SDK_AGENT_TYPE: ${UPLIFT_SDK_AGENT_TYPE:-cursor}
+      CURSOR_API_KEY: ${CURSOR_API_KEY:?set CURSOR_API_KEY in .env}
+    volumes:
+      - uplift_sessions:/app/sessions
+      - uplift_logs:/app/logs
+    depends_on:
+      agent-sdk:
+        condition: service_healthy
+    expose:
+      - "8786"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8786/api/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  reqops-backend:
+    build:
+      context: .
+      dockerfile: deploy/reqops-backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      HOST: 0.0.0.0
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/thoughtweaver?schema=public
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost}
+      DISCOVERY_ENGINE: uplift
+      UPLIFT_BRIDGE_URL: http://uplift:8786
+      UPLIFT_INTERNAL_TOKEN: ${UPLIFT_INTERNAL_TOKEN:-}
+      SIGNAL_ENGINE: uplift
+      REQOPS_INTERNAL_API_BASE: http://reqops-backend:3000/api/v1
+      DEV_USER_SUB: ${DEV_USER_SUB:-}
+      DEV_USER_EMAIL: ${DEV_USER_EMAIL:-}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN:-}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE:-}
+      AUTH0_ISSUER: ${AUTH0_ISSUER:-}
+      INTEGRATION_SECRET_KEY: ${INTEGRATION_SECRET_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ALLOW_GUEST: ${ALLOW_GUEST:-1}
+      COOKIE_SECRET: ${COOKIE_SECRET:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_SOLO: ${STRIPE_PRICE_SOLO:-}
+      STRIPE_PRICE_TEAM: ${STRIPE_PRICE_TEAM:-}
+      STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL:-https://app.reqops.com/?upgraded=1}
+      STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL:-https://app.reqops.com/}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      uplift:
+        condition: service_healthy
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  reqops-frontend:
+    build:
+      context: .
+      dockerfile: deploy/reqops-frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+        VITE_WS_BASE_URL: ${VITE_WS_BASE_URL:-ws://localhost/api/v1/ws}
+        VITE_LANGFLOW_USE_BACKEND: "true"
+        VITE_AUTH0_DOMAIN: ${VITE_AUTH0_DOMAIN:?set VITE_AUTH0_DOMAIN in .env}
+        VITE_AUTH0_CLIENT_ID: ${VITE_AUTH0_CLIENT_ID:?set VITE_AUTH0_CLIENT_ID in .env}
+        VITE_DEV_AUTH_BYPASS: ${VITE_DEV_AUTH_BYPASS:-}
+        VITE_COMMIT_BOARD_API_ENABLED: ${VITE_COMMIT_BOARD_API_ENABLED:-true}
+        VITE_COMMIT_BOARD_API_URL: ${VITE_COMMIT_BOARD_API_URL:-/api/v1}
+    restart: unless-stopped
+    expose:
+      - "80"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:-app.reqops.com}
+    volumes:
+      - ./deploy/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      reqops-backend:
+        condition: service_healthy
+      reqops-frontend:
+        condition: service_started
+
+volumes:
+  pgdata:
+  agent_sdk_volumes:
+  uplift_sessions:
+  uplift_logs:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,16 @@
+[Unit]
+Description=Uplift v6 bridge
+After=reqops-agent-sdk.service
+Requires=reqops-agent-sdk.service
+PartOf=reqops-stack.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/reqops-stack.env
+ExecStartPre=/bin/bash -lc 'cd "${REQOPS_AGENTS_ROOT}/uplift-v6" && test -d .venv || (python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt)'
+ExecStart=/bin/bash -lc 'cd "${REQOPS_AGENTS_ROOT}/uplift-v6" && export UPLIFT_HOST=0.0.0.0 UPLIFT_PORT=8786 UPLIFT_AGENT_MODE=headless UPLIFT_DISCOVERY_RUNNER=sdk UPLIFT_SIGNALS_RUNNER=sdk UPLIFT_AGENT_SDK_URL=http://127.0.0.1:7778 UPLIFT_SDK_PROVIDER="${UPLIFT_SDK_PROVIDER:-unix_local}" UPLIFT_SDK_AGENT_TYPE="${UPLIFT_SDK_AGENT_TYPE:-cursor}" && exec .venv/bin/python -m bridge.server'
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=reqops-stack.target

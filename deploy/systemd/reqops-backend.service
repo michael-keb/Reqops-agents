@@ -1,0 +1,16 @@
+[Unit]
+Description=ReqOps backend API
+After=reqops-postgres.service reqops-uplift.service
+Requires=reqops-postgres.service reqops-uplift.service
+PartOf=reqops-stack.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/reqops-stack.env
+ExecStartPre=/bin/bash -lc 'cd "${REQOPS_ROOT}/Reqops_backend" && npm run build && npx prisma migrate deploy'
+ExecStart=/bin/bash -lc 'cd "${REQOPS_ROOT}/Reqops_backend" && export NODE_ENV=production HOST=0.0.0.0 PORT=3000 DATABASE_URL="postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@127.0.0.1:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-thoughtweaver}?schema=public" DISCOVERY_ENGINE=uplift UPLIFT_BRIDGE_URL=http://127.0.0.1:8786 SIGNAL_ENGINE=uplift && exec npm start'
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=reqops-stack.target

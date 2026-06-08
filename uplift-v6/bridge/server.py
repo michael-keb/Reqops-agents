@@ -25,6 +25,7 @@ from . import signals_v01_api
 from . import sync_turn
 
 UI_DIR = ROOT / "ui"
+HOST = os.environ.get("UPLIFT_HOST", "127.0.0.1")
 PORT = int(os.environ.get("UPLIFT_PORT", "8786"))
 MOCK = os.environ.get("UPLIFT_MOCK_AGENT", "").strip() in ("1", "true", "yes")
 AGENT_MODE = os.environ.get("UPLIFT_AGENT_MODE", "pty").strip().lower()
@@ -64,18 +65,22 @@ def _agent_env() -> dict[str, str]:
 
 def _get_agent() -> HeadlessAgent | PtyAgent | MockAgent:
     global _agent
+    env = _agent_env()
+    active = sess.active_session()
+    workspace = sess.session_path(active) if active and sess.session_exists(active) else ROOT
     if _agent is None:
-        env = _agent_env()
         if MOCK:
-            _agent = MockAgent(cwd=ROOT, env_extra=env)
+            _agent = MockAgent(cwd=workspace, env_extra=env)
         elif AGENT_MODE == "pty":
             _agent = PtyAgent(cwd=ROOT, env_extra=env)
         else:
-            _agent = HeadlessAgent(cwd=ROOT, env_extra=env)
+            _agent = HeadlessAgent(cwd=workspace, env_extra=env, cli_mode="ask")
         _agent.on_chunk(_broadcast_bytes)
         _agent.on_event(_broadcast_event)
     else:
-        _agent.env_extra = _agent_env()
+        _agent.env_extra = env
+        if hasattr(_agent, "cwd") and AGENT_MODE != "pty":
+            _agent.cwd = workspace  # type: ignore[attr-defined]
     return _agent
 
 
@@ -187,7 +192,12 @@ async def _handle_ws_message(data: dict) -> None:
         if not text:
             return
         agent = _get_agent()
-        await asyncio.to_thread(agent.send, wrap_discovery_message(text))
+        active = sess.active_session()
+        session_dir = sess.session_path(active) if active and sess.session_exists(active) else None
+        await asyncio.to_thread(
+            agent.send,
+            wrap_discovery_message(text, session_dir=session_dir),
+        )
     elif kind == "interrupt":
         agent = _get_agent()
         await asyncio.to_thread(agent.interrupt)
@@ -243,7 +253,9 @@ async def api_start(request: web.Request) -> web.Response:
         return web.json_response({"error": "pitch required"}, status=400)
     session_id = (body.get("session_id") or body.get("sessionId") or "").strip() or None
     bootstrap = body.get("bootstrap", True)
-    if session_id and AGENT_MODE == "headless":
+
+    # ReqOps (and any caller with a fixed session id) must use sync_turn — not the global PTY agent.
+    if session_id:
         try:
             result = await asyncio.to_thread(
                 sync_turn.start_session,
@@ -251,7 +263,23 @@ async def api_start(request: web.Request) -> web.Response:
                 session_id=session_id,
                 bootstrap=bool(bootstrap),
             )
-            trace.info("session", "started (headless api)", session_id=result["session_id"], pitch=pitch)
+            trace.info("session", "started (sync_turn)", session_id=result["session_id"], pitch=pitch[:80])
+            return web.json_response({**result, "trace": trace.paths()})
+        except ValueError as exc:
+            return web.json_response({"error": str(exc)}, status=400)
+        except Exception as exc:
+            trace.error("session start failed", exc, session_id=session_id)
+            return web.json_response({"error": str(exc), "trace": trace.paths()}, status=500)
+
+    if AGENT_MODE == "headless":
+        try:
+            result = await asyncio.to_thread(
+                sync_turn.start_session,
+                pitch,
+                session_id=None,
+                bootstrap=bool(bootstrap),
+            )
+            trace.info("session", "started (headless api)", session_id=result["session_id"], pitch=pitch[:80])
             return web.json_response({**result, "trace": trace.paths()})
         except ValueError as exc:
             return web.json_response({"error": str(exc)}, status=400)
@@ -563,6 +591,9 @@ async def api_session_signals_extract_stream(request: web.Request) -> web.Respon
     def on_progress(msg: str) -> None:
         loop.call_soon_threadsafe(q.put_nowait, {"type": "progress", "message": msg})
 
+    def on_mutation(payload: dict) -> None:
+        loop.call_soon_threadsafe(q.put_nowait, {"type": "mutation", **payload})
+
     async def write_sse(item: dict) -> None:
         await resp.write(f"data: {json.dumps(item, ensure_ascii=False)}\n\n".encode())
         if hasattr(resp, "flush"):
@@ -576,6 +607,7 @@ async def api_session_signals_extract_stream(request: web.Request) -> web.Respon
                 column_ids=column_ids,
                 run_id=run_id,
                 on_progress=on_progress,
+                on_mutation=on_mutation,
                 mutate_url=mutate_url if isinstance(mutate_url, str) else None,
                 snapshot_url=snapshot_url if isinstance(snapshot_url, str) else None,
                 mutate_token=str(mutate_token) if mutate_token else None,
@@ -830,7 +862,7 @@ def main() -> None:
     mode_label = "PTY (persistent)" if AGENT_MODE == "pty" else AGENT_MODE
     print(f"Uplift v6 → http://127.0.0.1:{PORT}/  ({mode_label} agent)")
     print(f"Trace log: {paths.get('jsonl')}")
-    web.run_app(app, host="127.0.0.1", port=PORT, print=None)
+    web.run_app(app, host=HOST, port=PORT, print=None)
 
 
 if __name__ == "__main__":

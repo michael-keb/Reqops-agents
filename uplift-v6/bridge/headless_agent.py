@@ -55,6 +55,7 @@ class HeadlessAgent:
 
     cwd: Path = field(default_factory=lambda: ROOT)
     env_extra: dict[str, str] = field(default_factory=dict)
+    cli_mode: str | None = None
     _chat_id: str | None = field(default=None, init=False, repr=False)
     _proc: subprocess.Popen[str] | None = field(default=None, init=False, repr=False)
     _lock: threading.Lock = field(default_factory=threading.Lock, init=False, repr=False)
@@ -178,6 +179,9 @@ class HeadlessAgent:
         ]
         if fmt == "stream-json" and os.environ.get("UPLIFT_STREAM_PARTIAL", "1").strip() not in ("0", "false", "no"):
             cmd.append("--stream-partial-output")
+        mode = self.cli_mode or os.environ.get("UPLIFT_AGENT_CLI_MODE", "").strip() or None
+        if mode:
+            cmd.extend(["--mode", mode])
         if os.environ.get("UPLIFT_APPROVE_MCPS", "1").strip() not in ("0", "false", "no"):
             cmd.append("--approve-mcps")
         return cmd

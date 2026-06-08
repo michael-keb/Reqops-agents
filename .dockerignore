@@ -1,0 +1,12 @@
+# Explicit dockerignore (overrides gitignore-as-dockerignore for BuildKit).
+.git
+.venv
+**/.venv
+**/__pycache__
+archive/
+uplift-v6/sessions/
+uplift-v6/logs/
+uplift-reqops-e2e/.stack/
+deploy/.ssh-reqops/
+.env
+.env.*

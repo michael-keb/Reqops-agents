@@ -16,7 +16,7 @@ SIG_PKG = ROOT / "signals-v01"
 if str(SIG_PKG) not in sys.path:
     sys.path.insert(0, str(SIG_PKG))
 
-from signals_v01.actions import parse_action_blocks, validate_add  # noqa: E402
+from signals_v01.actions import parse_action_blocks, validate_add, validate_add_draft  # noqa: E402
 from signals_v01.columns import COLUMN_BY_ID  # noqa: E402
 from signals_v01.column_runner import _resolve_agent_text  # noqa: E402
 from signals_v01.extract import extract_signals  # noqa: E402
@@ -86,6 +86,14 @@ class ActionsTest(unittest.TestCase):
         self.assertEqual(len(blocks), 1)
         self.assertEqual(blocks[0]["column"], "actor")
 
+    def test_validate_add_draft_title_only(self) -> None:
+        action = {
+            "action": "add_draft",
+            "column": "goal",
+            "card": {"title": "North star"},
+        }
+        self.assertIsNone(validate_add_draft(action, expected_column="goal"))
+
     def test_validate_add_inferred(self) -> None:
         action = {
             "action": "add",
@@ -135,6 +143,38 @@ class StoreTest(unittest.TestCase):
             self.assertTrue(r2.ok)
             self.assertEqual(len(store.column_snapshot("goal")), 0)
             self.assertTrue(store.list_active_nodes() == [])
+
+    def test_add_draft_then_edit_description(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            store = SignalStore(session_dir=root)
+            store.load()
+            draft = {
+                "action": "add_draft",
+                "column": "goal",
+                "card": {"title": "North star"},
+            }
+            r = store.mutate(draft, run_id="run")
+            self.assertTrue(r.ok)
+            assert r.node
+            self.assertEqual(r.node["cardState"], "draft")
+            self.assertEqual(r.node["body"], "")
+            edit = {
+                "action": "edit",
+                "column": "goal",
+                "id": r.node["id"],
+                "updatedAt": r.node["updatedAt"],
+                "patch": {
+                    "body": "Sell faster.",
+                    "evidence": ["sell faster"],
+                    "confidence": "high",
+                },
+            }
+            r2 = store.mutate(edit, run_id="run")
+            self.assertTrue(r2.ok)
+            assert r2.node
+            self.assertEqual(r2.node["body"], "Sell faster.")
+            self.assertEqual(r2.node["cardState"], "emerging")
 
     def test_edit_conflict(self) -> None:
         with tempfile.TemporaryDirectory() as d:
@@ -192,6 +232,64 @@ class ExtractTest(unittest.TestCase):
             data = json.loads(store_path.read_text(encoding="utf-8"))
             active = [n for n in data["nodes"] if not n.get("deletedAt")]
             self.assertGreaterEqual(len(active), 2)
+            for node in active:
+                self.assertTrue(node.get("title"))
+                self.assertTrue(node.get("body"))
+                self.assertNotEqual(node.get("cardState"), "draft")
+
+    def test_extract_staggered_title_before_description_mutations(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "Memory.md").write_text("# Discovery memory\n\n## Pitch\norder test\n", encoding="utf-8")
+            turn_dir = root / "turns" / "01"
+            turn_dir.mkdir(parents=True)
+            (turn_dir / "user-input.txt").write_text("order test", encoding="utf-8")
+            (turn_dir / "response.md").write_text("## Reflection\nok\n", encoding="utf-8")
+
+            uplift_root = Path(__file__).resolve().parent.parent
+            sys.path.insert(0, str(uplift_root))
+            import signals_v01.extract as extract_mod
+
+            mutations: list[tuple[str, str, str]] = []
+
+            def on_mutation(payload: dict) -> None:
+                node = payload.get("node") or {}
+                mutations.append(
+                    (
+                        str(payload.get("action") or ""),
+                        str(node.get("cardState") or ""),
+                        str(node.get("title") or ""),
+                    )
+                )
+
+            with mock.patch.object(extract_mod.sess, "session_path", return_value=root):
+                with mock.patch.dict(os.environ, {"UPLIFT_MOCK_AGENT": "1"}):
+                    extract_signals("test-session", column_ids=["goal"], on_mutation=on_mutation)
+            self.assertGreaterEqual(len(mutations), 2)
+            self.assertEqual(mutations[0][0], "add_draft")
+            self.assertEqual(mutations[0][1], "draft")
+            self.assertEqual(mutations[1][0], "edit")
+            self.assertNotEqual(mutations[1][1], "draft")
+
+    def test_extract_staggered_mode_in_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "Memory.md").write_text("# Discovery memory\n\n## Pitch\nstagger test\n", encoding="utf-8")
+            turn_dir = root / "turns" / "01"
+            turn_dir.mkdir(parents=True)
+            (turn_dir / "user-input.txt").write_text("stagger test", encoding="utf-8")
+            (turn_dir / "response.md").write_text("## Reflection\nok\n", encoding="utf-8")
+
+            uplift_root = Path(__file__).resolve().parent.parent
+            sys.path.insert(0, str(uplift_root))
+            import signals_v01.extract as extract_mod
+
+            with mock.patch.object(extract_mod.sess, "session_path", return_value=root):
+                with mock.patch.dict(os.environ, {"UPLIFT_MOCK_AGENT": "1"}):
+                    result = extract_signals("test-session", column_ids=["goal"])
+            manifest_path = root / "signals-v01" / result["run_id"] / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(manifest.get("mode"), "staggered_title_description")
 
 
 if __name__ == "__main__":

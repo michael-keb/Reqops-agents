@@ -86,6 +86,18 @@ def _non_empty_str(v: Any) -> str:
     return str(v or "").strip()
 
 
+def validate_add_draft(action: dict[str, Any], *, expected_column: str) -> str | None:
+    if _non_empty_str(action.get("column")) != expected_column:
+        return f"column must be {expected_column}"
+    card = action.get("card")
+    if not isinstance(card, dict):
+        return "add_draft requires card object"
+    title = _non_empty_str(card.get("title"))
+    if not title:
+        return "add_draft requires title"
+    return None
+
+
 def validate_add(action: dict[str, Any], *, expected_column: str) -> str | None:
     if _non_empty_str(action.get("column")) != expected_column:
         return f"column must be {expected_column}"

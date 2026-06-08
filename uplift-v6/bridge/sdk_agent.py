@@ -21,6 +21,40 @@ ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SDK_URL = os.environ.get("UPLIFT_AGENT_SDK_URL", "http://127.0.0.1:7778")
 AGENT_TIMEOUT = int(os.environ.get("UPLIFT_AGENT_TIMEOUT", "600"))
 
+# Cursor CLI ask mode + claude disallowedTools — chat-only workshop agents.
+CHAT_ONLY_DISALLOWED_TOOLS = [
+    "Read",
+    "Grep",
+    "Glob",
+    "List",
+    "Search",
+    "Edit",
+    "Write",
+    "Shell",
+    "Delete",
+    "ApplyPatch",
+    "Bash",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+]
+
+
+class ChatOnlyToolViolation(RuntimeError):
+    """Raised when a chat-only agent attempts file or shell tools."""
+
+
+class InvalidWorkshopResponse(RuntimeError):
+    """Raised when a chat-only agent returns non-workshop output."""
+
+
+def _sdk_provider() -> str:
+    return (os.environ.get("UPLIFT_SDK_PROVIDER", "unix_local") or "unix_local").strip().lower()
+
+
+def _sdk_agent_type() -> str:
+    return (os.environ.get("UPLIFT_SDK_AGENT_TYPE", "cursor") or "cursor").strip().lower()
+
 EventFn = Callable[[dict], None]
 ChunkFn = Callable[[bytes], None]
 ProgressFn = Callable[[str], None]
@@ -59,6 +93,15 @@ def _extract_text_chunk(event: dict) -> str:
     return ""
 
 
+def _is_tool_session_update(update: dict) -> bool:
+    su = (update.get("sessionUpdate") or "").lower()
+    if su in ("tool_call", "tool_call_update", "execute_tool_started", "execute_tool_completed"):
+        return True
+    if update.get("toolCallId") or update.get("toolName"):
+        return True
+    return False
+
+
 def _extract_stream_error(event: dict) -> str:
     if "error" in event:
         err = event["error"]
@@ -78,8 +121,10 @@ class SdkAgent:
     cwd: Path = field(default_factory=lambda: ROOT)
     session_dir: Path | None = None
     sdk_url: str = field(default_factory=lambda: DEFAULT_SDK_URL.rstrip("/"))
-    agent_type: str = "cursor"
-    provider: str = "unix_local"
+    agent_type: str = field(default_factory=_sdk_agent_type)
+    provider: str = field(default_factory=_sdk_provider)
+    chat_only: bool = False
+    cli_mode: str | None = None
 
     _session_id: str | None = field(default=None, init=False, repr=False)
     _lock: threading.Lock = field(default_factory=threading.Lock, init=False, repr=False)
@@ -155,14 +200,20 @@ class SdkAgent:
                 }
             )
             return
+        create_body: dict = {
+            "provider": self.provider,
+            "agent_type": self.agent_type,
+            "cwd": str(self.cwd),
+        }
+        mode = self.cli_mode or ("ask" if self.chat_only else None)
+        if mode:
+            create_body["mode"] = mode
+        if self.chat_only:
+            create_body["extra_options"] = {"disallowedTools": CHAT_ONLY_DISALLOWED_TOOLS}
         status, raw = self._request(
             "POST",
             "/sessions",
-            {
-                "provider": self.provider,
-                "agent_type": self.agent_type,
-                "cwd": str(self.cwd),
-            },
+            create_body,
             timeout=120.0,
         )
         if status >= 400:
@@ -206,6 +257,8 @@ class SdkAgent:
         errors: list[str] = []
         started = time.monotonic()
         last_progress_at = 0.0
+        last_progress_msg: str | None = None
+        tool_violation = False
 
         with urllib.request.urlopen(req, timeout=AGENT_TIMEOUT) as resp:
             if resp.status >= 400:
@@ -238,15 +291,26 @@ class SdkAgent:
                     chunks.append(chunk)
                     self._emit_chunk(chunk.encode("utf-8"))
 
+                update = (event.get("params") or {}).get("update") or {}
+                if self.chat_only and _is_tool_session_update(update):
+                    tool_violation = True
+                    if self._session_id:
+                        self._request("POST", f"/sessions/{self._session_id}/cancel", timeout=10.0)
+                    break
+
                 if on_progress:
-                    update = (event.get("params") or {}).get("update") or {}
                     pm = _progress_from_sdk_update(update)
                     if pm:
                         now = time.monotonic()
-                        if now - last_progress_at >= 0.8:
+                        if pm == last_progress_msg and pm in ("Thinking…", "Drafting response…"):
+                            continue
+                        if now - last_progress_at >= 0.8 or pm != last_progress_msg:
                             on_progress(pm)
                             last_progress_at = now
+                            last_progress_msg = pm
 
+        if tool_violation:
+            raise ChatOnlyToolViolation("chat-only agent attempted a file or shell tool")
         return "".join(chunks), errors
 
     def send(self, text: str, *, on_progress: ProgressFn | None = None) -> None:
@@ -286,6 +350,18 @@ class SdkAgent:
             trace.turn_boundary(action="timeout", turn=turn, elapsed_s=AGENT_TIMEOUT)
             self._emit_event({"type": "turn_timeout", "turn": turn})
             return
+        except ChatOnlyToolViolation:
+            with self._lock:
+                self._waiting_turn = False
+            trace.warn("validation", "chat-only tool violation — turn cancelled", turn=turn)
+            self._emit_event({"type": "tool_violation", "turn": turn})
+            raise
+        except InvalidWorkshopResponse:
+            with self._lock:
+                self._waiting_turn = False
+            trace.warn("validation", "invalid workshop response — turn rejected", turn=turn)
+            self._emit_event({"type": "workshop_invalid", "turn": turn})
+            raise
         except Exception as exc:
             rc = 1
             err_detail = str(exc)
@@ -309,6 +385,13 @@ class SdkAgent:
 
         elapsed = time.monotonic() - started
         captured = (result_text or "").strip()
+
+        if rc == 0 and captured and self.chat_only:
+            from .discovery_context import valid_discovery_response
+
+            if not valid_discovery_response(captured):
+                trace.warn("validation", "rejecting non-workshop agent output", turn=turn)
+                raise InvalidWorkshopResponse("agent output is not valid Reflection + 5 MCQs")
 
         if rc == 0 and captured:
             session_turn = turn

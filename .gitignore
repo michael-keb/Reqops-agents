@@ -18,3 +18,4 @@ uplift-reqops-e2e/.venv/
 uplift-reqops-e2e/.stack/
 agent-sdk-e2e/.venv/
 agent-sdk/.venv/
+deploy/.ssh-reqops/

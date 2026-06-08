@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .actions import validate_add, validate_edit, validate_remove
+from .actions import validate_add, validate_add_draft, validate_edit, validate_remove
 from .columns import COLUMN_BY_ID, SignalColumn
 
 
@@ -120,7 +120,11 @@ class SignalStore:
         run_id: str,
     ) -> dict[str, Any]:
         confidence = str(card.get("confidence") or "medium").lower()
-        card_state = "review" if confidence == "inferred" else "emerging"
+        body_text = str(card.get("body") or "").strip()
+        if body_text:
+            card_state = "review" if confidence == "inferred" else "emerging"
+        else:
+            card_state = "draft"
         evidence = card.get("evidence")
         if isinstance(evidence, str):
             evidence = [evidence]
@@ -184,6 +188,20 @@ class SignalStore:
             node = self._card_to_node(column=column, card=card, run_id=run_id)
             self._nodes.append(node)
             self._record_revision(node, reason="agent-add", run_id=run_id)
+            self.save()
+            return MutationResult(ok=True, action=verb, node=node)
+
+        if verb == "add_draft":
+            err = validate_add_draft(action, expected_column=column_id)
+            if err:
+                return MutationResult(ok=False, action=verb, error=err)
+            card = action.get("card")
+            assert isinstance(card, dict)
+            draft_card = {**card, "body": "", "confidence": card.get("confidence") or "medium"}
+            node = self._card_to_node(column=column, card=draft_card, run_id=run_id)
+            node["cardState"] = "draft"
+            self._nodes.append(node)
+            self._record_revision(node, reason="agent-add-draft", run_id=run_id)
             self.save()
             return MutationResult(ok=True, action=verb, node=node)
 

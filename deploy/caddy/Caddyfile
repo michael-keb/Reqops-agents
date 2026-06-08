@@ -1,0 +1,15 @@
+# HTTP edge — Cloudflare (proxied) terminates HTTPS for app.reqops.com.
+# For DNS-only (grey cloud), change to: {$PUBLIC_HOST} { ... } and open :443.
+http://{$PUBLIC_HOST} {
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy reqops-backend:3000 {
+			flush_interval -1
+		}
+	}
+
+	handle {
+		reverse_proxy reqops-frontend:80
+	}
+}

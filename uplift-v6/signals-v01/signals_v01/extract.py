@@ -1,10 +1,12 @@
-"""Sequential signals-v01 extract — one agent, nine columns in order."""
+"""Staggered signals-v01 extract — title agent then description agent per card."""
 
 from __future__ import annotations
 
 import json
 import os
+import queue
 import sys
+import threading
 import time
 from collections.abc import Callable
 from datetime import datetime, timezone
@@ -12,8 +14,14 @@ from pathlib import Path
 from typing import Any
 
 from .cancel_registry import clear_run, is_cancelled, register_run
-from .column_runner import ColumnRunResult, extract_agent_dir, make_extract_agent, run_column
-from .columns import SIGNAL_COLUMNS, SignalColumn
+from .column_runner import (
+    ColumnRunResult,
+    fill_card_description,
+    make_description_agent,
+    make_title_agent,
+    run_column_titles,
+)
+from .columns import COLUMN_BY_ID, SIGNAL_COLUMNS, SignalColumn
 from .remote_store import RemoteSignalStore
 from .store import SignalStore
 from .transcript import build_transcript
@@ -28,6 +36,7 @@ from bridge import session as sess  # noqa: E402
 from bridge import trace  # noqa: E402
 
 ProgressFn = Callable[[str], None]
+MutationFn = Callable[[dict[str, Any]], None]
 
 
 def _mock_mode() -> bool:
@@ -65,6 +74,7 @@ def extract_signals(
     column_ids: list[str] | None = None,
     run_id: str | None = None,
     on_progress: ProgressFn | None = None,
+    on_mutation: MutationFn | None = None,
     mutate_url: str | None = None,
     snapshot_url: str | None = None,
     mutate_token: str | None = None,
@@ -100,43 +110,105 @@ def extract_signals(
     extract_dir.mkdir(parents=True, exist_ok=True)
 
     if on_progress:
-        on_progress(f"signals-v01 · {len(selected)} columns · one agent · run {run_id}")
+        on_progress(
+            f"signals-v01 · {len(selected)} columns · staggered titles→descriptions · run {run_id}"
+        )
 
     started = time.monotonic()
     results: dict[str, ColumnRunResult] = {}
     errors: dict[str, str] = {}
+    desc_errors: list[str] = []
+    desc_turn = 0
 
-    agent = None
+    title_agent = None
+    desc_agent = None
+    desc_queue: queue.Queue[dict[str, Any] | None] = queue.Queue()
+
+    def description_worker() -> None:
+        nonlocal desc_turn
+        while True:
+            item = desc_queue.get()
+            try:
+                if item is None:
+                    break
+                column = COLUMN_BY_ID.get(str(item.get("column") or ""))
+                if not column:
+                    desc_errors.append(f"unknown column for card {item.get('id')}")
+                    continue
+                turn = desc_turn
+                ok = fill_card_description(
+                    session_id=session_id,
+                    session_dir=path,
+                    column=column,
+                    transcript=transcript,
+                    store=store,
+                    run_id=run_id,
+                    card=item,
+                    agent=desc_agent,
+                    on_progress=on_progress,
+                    on_mutation=on_mutation,
+                    desc_turn=turn,
+                )
+                if ok:
+                    desc_turn += 1
+                if not ok:
+                    desc_errors.append(
+                        f"description failed for {item.get('title') or item.get('id')}"
+                    )
+            except Exception as exc:
+                trace.error("description worker failed", exc)
+                desc_errors.append(str(exc))
+            finally:
+                desc_queue.task_done()
+
+    desc_thread = threading.Thread(target=description_worker, name="signal-desc-worker", daemon=True)
+    desc_thread.start()
+
     if not _mock_mode():
         runner = os.environ.get("UPLIFT_SIGNALS_RUNNER", "sdk").strip().lower()
-        agent_dir = extract_agent_dir(path, run_id)
-        agent = make_extract_agent(agent_dir=agent_dir)
+        title_agent = make_title_agent(session_dir=path, run_id=run_id)
+        desc_agent = make_description_agent(session_dir=path, run_id=run_id)
         trace.info("lifecycle", f"signals extract runner: {runner}", run_id=run_id)
-        agent.start()
+        title_agent.start()
+        desc_agent.start()
         if on_progress:
-            on_progress(f"agent ready ({runner}) — one session, columns sequential")
+            on_progress(
+                f"agent ready ({runner}) — staggered titles→descriptions (2 persistent sessions)"
+            )
+    elif on_progress:
+        on_progress("mock mode — staggered title/description pipeline")
+
+    def enqueue_title(node: dict[str, Any]) -> None:
+        title = node.get("title") or node.get("id")
+        if on_progress:
+            on_progress(f"title landed · {title} → description queued")
+        desc_queue.put(dict(node))
 
     try:
         for index, col in enumerate(selected, start=1):
             if is_cancelled(session_id, col.id):
                 errors[col.id] = "cancelled"
-                if agent is not None:
-                    agent.interrupt()
+                if title_agent is not None:
+                    title_agent.interrupt()
+                if desc_agent is not None:
+                    desc_agent.interrupt()
                 break
 
             if on_progress:
-                on_progress(f"column {index}/{len(selected)} · {col.title}")
+                on_progress(f"column {index}/{len(selected)} · {col.title} · titles")
 
             try:
-                results[col.id] = run_column(
+                results[col.id] = run_column_titles(
                     session_id=session_id,
                     session_dir=path,
                     column=col,
                     transcript=transcript,
                     store=store,
                     run_id=run_id,
-                    agent=agent,
+                    agent=title_agent,
                     on_progress=on_progress,
+                    on_mutation=on_mutation,
+                    on_title_added=enqueue_title,
                 )
             except Exception as exc:
                 trace.error(f"signals column {col.id} failed", exc)
@@ -144,9 +216,18 @@ def extract_signals(
 
             if results.get(col.id) and results[col.id].status == "cancelled":
                 break
+
+        if on_progress:
+            on_progress("waiting for descriptions to finish…")
+        desc_queue.join()
     finally:
-        if agent is not None:
-            agent.stop()
+        desc_queue.put(None)
+        if desc_thread is not None:
+            desc_thread.join(timeout=5.0)
+        if title_agent is not None:
+            title_agent.stop()
+        if desc_agent is not None:
+            desc_agent.stop()
         clear_run(session_id)
 
     elapsed = round(time.monotonic() - started, 2)
@@ -177,7 +258,7 @@ def extract_signals(
         "run_id": run_id,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "elapsed_s": elapsed,
-        "mode": "sequential_single_agent",
+        "mode": "staggered_title_description",
         "summary": {
             "columns_total": len(columns_out),
             "columns_ok": len(columns_out) - columns_failed,
@@ -186,6 +267,7 @@ def extract_signals(
         },
         "columns": columns_out,
         "errors": errors,
+        "description_errors": desc_errors,
     }
     (extract_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
@@ -206,6 +288,7 @@ def extract_signals(
         "summary": manifest["summary"],
         "columns": columns_out,
         "errors": errors,
+        "description_errors": desc_errors,
     }
 
 

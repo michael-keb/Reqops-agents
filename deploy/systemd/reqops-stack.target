@@ -1,0 +1,6 @@
+[Unit]
+Description=ReqOps full stack (Postgres + agent-sdk + uplift + backend + frontend)
+Wants=reqops-postgres.service reqops-agent-sdk.service reqops-uplift.service reqops-backend.service reqops-frontend.service
+
+[Install]
+WantedBy=multi-user.target

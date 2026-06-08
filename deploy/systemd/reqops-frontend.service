@@ -1,0 +1,16 @@
+[Unit]
+Description=ReqOps frontend (Vite preview)
+After=reqops-backend.service
+Requires=reqops-backend.service
+PartOf=reqops-stack.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/reqops-stack.env
+ExecStartPre=/bin/bash -lc 'cd "${REQOPS_ROOT}/Reqops_Frontend" && export VITE_API_BASE_URL=/api/v1 VITE_LANGFLOW_USE_BACKEND=true && npm run build'
+ExecStart=/bin/bash -lc 'cd "${REQOPS_ROOT}/Reqops_Frontend" && exec npm run preview -- --host 0.0.0.0 --port 8080'
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=reqops-stack.target

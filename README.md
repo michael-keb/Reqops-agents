@@ -15,6 +15,17 @@ ReqOps (backend + frontend) lives outside this repo:
 
 `../Thinkfast book/ReqOps/`
 
+## Deploy (single server)
+
+Docker Compose bundles Postgres, agent-sdk, uplift-v6, ReqOps backend/frontend, and nginx on one machine.
+
+```bash
+cp .env.docker.example .env   # set CURSOR_API_KEY
+./deploy/up.sh
+```
+
+See [deploy/README.md](deploy/README.md). Systemd units for bare-metal VPS are in [deploy/systemd/](deploy/systemd/).
+
 ## Quick start (local full stack)
 
 ```bash

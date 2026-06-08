@@ -113,8 +113,16 @@ def _parse_reflection(text: str) -> str:
     return m.group(1).strip() if m else ""
 
 
+def _find_mcq_options(rest: str) -> list[tuple[str, str]]:
+    """A-D options as - A) … or bare A) … lines."""
+    opts = re.findall(r"^-\s*([A-D])\)\s*(.+)$", rest, re.MULTILINE)
+    if not opts:
+        opts = re.findall(r"^([A-D])\)\s*(.+)$", rest, re.MULTILINE)
+    return opts
+
+
 def _parse_questions_markdown(text: str) -> list[dict]:
-    """Best-effort parse of ### N. title blocks with A-D options."""
+    """Best-effort parse of ### N. / N. title blocks with A-D options."""
     questions: list[dict] = []
     body = text
     if "## Questions" in body:
@@ -123,8 +131,8 @@ def _parse_questions_markdown(text: str) -> list[dict]:
         # legacy single-question format
         body = body.split("## Question", 1)[1]
         m = re.search(r"\*\*(.+?)\*\*", body)
-        stem_m = re.search(r"\*\*.+?\*\*\s*\n([\s\S]*?)(?=\n-\s*[A-D]\)|\Z)", body)
-        opts = re.findall(r"^-\s*([A-D])\)\s*(.+)$", body, re.MULTILINE)
+        stem_m = re.search(r"\*\*.+?\*\*\s*\n([\s\S]*?)(?=\n(?:-\s*)?[A-D]\)|\Z)", body)
+        opts = _find_mcq_options(body)
         if m:
             questions.append(
                 {
@@ -139,6 +147,8 @@ def _parse_questions_markdown(text: str) -> list[dict]:
     blocks = re.split(r"(?=^###\s+\d+\.\s)", body, flags=re.MULTILINE)
     if len(blocks) <= 1:
         blocks = re.split(r"(?=^\d+\.\s+\*\*)", body, flags=re.MULTILINE)
+    if len(blocks) <= 1:
+        blocks = re.split(r"(?=^\d+\.\s+\S)", body, flags=re.MULTILINE)
     for block in blocks:
         block = block.strip()
         if not block:
@@ -147,13 +157,15 @@ def _parse_questions_markdown(text: str) -> list[dict]:
         if not hdr:
             hdr = re.match(r"^(\d+)\.\s+\*\*(.+?)\*\*", block, re.MULTILINE)
         if not hdr:
+            hdr = re.match(r"^(\d+)\.\s+(.+?)\s*$", block, re.MULTILINE)
+        if not hdr:
             continue
         rank = int(hdr.group(1))
         title = hdr.group(2).strip().rstrip("*").strip()
         rest = block[hdr.end() :].strip()
-        stem_m = re.match(r"^([\s\S]*?)(?=\n-\s*[A-D]\)|\Z)", rest)
+        stem_m = re.match(r"^([\s\S]*?)(?=\n(?:-\s*)?[A-D]\)|\Z)", rest)
         stem = stem_m.group(1).strip() if stem_m else ""
-        opts = re.findall(r"^-\s*([A-D])\)\s*(.+)$", rest, re.MULTILINE)
+        opts = _find_mcq_options(rest)
         questions.append(
             {
                 "rank": rank,

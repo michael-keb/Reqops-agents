@@ -13,9 +13,14 @@ fi
 source "$VENV/bin/activate"
 pip install -q -r requirements.txt
 
-if ! command -v agent >/dev/null 2>&1; then
+_sdk_only() {
+  [[ "${UPLIFT_DISCOVERY_RUNNER:-sdk}" == "sdk" && "${UPLIFT_SIGNALS_RUNNER:-sdk}" == "sdk" ]]
+}
+
+if ! _sdk_only && ! command -v agent >/dev/null 2>&1; then
   echo "Cursor agent CLI not found. Install:" >&2
   echo "  curl https://cursor.com/install -fsS | bash && agent login" >&2
+  echo "Or use SDK runners (no local CLI): UPLIFT_DISCOVERY_RUNNER=sdk UPLIFT_SIGNALS_RUNNER=sdk" >&2
   exit 1
 fi
 

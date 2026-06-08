@@ -1,0 +1,24 @@
+[Unit]
+Description=ReqOps PostgreSQL (Docker)
+After=docker.service
+Requires=docker.service
+PartOf=reqops-stack.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/reqops-stack.env
+ExecStartPre=/usr/bin/docker rm -f reqops-postgres 2>/dev/null || true
+ExecStart=/usr/bin/docker run --name reqops-postgres \
+  -p ${POSTGRES_PORT:-5432}:5432 \
+  -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+  -e POSTGRES_USER=${POSTGRES_USER:-postgres} \
+  -e POSTGRES_DB=postgres \
+  -v reqops-pgdata:/var/lib/postgresql/data \
+  -v ${REQOPS_AGENTS_ROOT}/deploy/postgres/init-databases.sh:/docker-entrypoint-initdb.d/01-init-databases.sh:ro \
+  postgres:16-alpine
+ExecStop=/usr/bin/docker stop reqops-postgres
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=reqops-stack.target
